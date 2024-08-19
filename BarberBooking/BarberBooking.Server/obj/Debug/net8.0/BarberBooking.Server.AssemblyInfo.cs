@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BarberBooking.Server")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+734621732e327d4fec8dee3549f450c08ceaa249")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9057b389b04586c30b4aa933fd50c79c66fe6892")]
 [assembly: System.Reflection.AssemblyProductAttribute("BarberBooking.Server")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BarberBooking.Server")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

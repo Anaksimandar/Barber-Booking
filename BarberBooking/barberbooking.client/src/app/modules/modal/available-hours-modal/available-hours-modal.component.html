@@ -1,0 +1,20 @@
+
+<div>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Choose avaible time for <br /> {{date | date:'fullDate'}}</h4>
+    <button type="button" class="btn-close" (click)="close()" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <div class="swiper-container">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide" *ngFor="let hour of availableHours">
+          {{ hour }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" (click)="submit()" class="btn btn-outline-secondary">Save</button>
+  </div>
+</div>
+

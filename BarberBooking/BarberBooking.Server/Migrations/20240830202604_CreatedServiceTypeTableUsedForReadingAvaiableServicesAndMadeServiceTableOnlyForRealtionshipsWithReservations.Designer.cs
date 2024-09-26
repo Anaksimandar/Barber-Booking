@@ -4,6 +4,7 @@ using BarberBooking.Server.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BarberBooking.Server.Migrations
 {
     [DbContext(typeof(BarberBookingContext))]
-    partial class BarberBookingContextModelSnapshot : ModelSnapshot
+    [Migration("20240830202604_CreatedServiceTypeTableUsedForReadingAvaiableServicesAndMadeServiceTableOnlyForRealtionshipsWithReservations")]
+    partial class CreatedServiceTypeTableUsedForReadingAvaiableServicesAndMadeServiceTableOnlyForRealtionshipsWithReservations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,19 +36,37 @@ namespace BarberBooking.Server.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ServiceTypeId")
-                        .HasColumnType("int");
-
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ServiceTypeId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Reservations");
+                });
+
+            modelBuilder.Entity("BarberBooking.Server.Entities.Service", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ReservationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServiceTypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReservationId");
+
+                    b.HasIndex("ServiceTypeId");
+
+                    b.ToTable("Services");
                 });
 
             modelBuilder.Entity("BarberBooking.Server.Entities.ServiceType", b =>
@@ -105,21 +126,37 @@ namespace BarberBooking.Server.Migrations
 
             modelBuilder.Entity("BarberBooking.Server.Entities.Reservation", b =>
                 {
-                    b.HasOne("BarberBooking.Server.Entities.ServiceType", "ServiceType")
-                        .WithMany()
-                        .HasForeignKey("ServiceTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("BarberBooking.Server.Entities.User", "User")
                         .WithMany("Reservations")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ServiceType");
-
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BarberBooking.Server.Entities.Service", b =>
+                {
+                    b.HasOne("BarberBooking.Server.Entities.Reservation", "Reservation")
+                        .WithMany("Services")
+                        .HasForeignKey("ReservationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BarberBooking.Server.Entities.ServiceType", "Type")
+                        .WithMany()
+                        .HasForeignKey("ServiceTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Reservation");
+
+                    b.Navigation("Type");
+                });
+
+            modelBuilder.Entity("BarberBooking.Server.Entities.Reservation", b =>
+                {
+                    b.Navigation("Services");
                 });
 
             modelBuilder.Entity("BarberBooking.Server.Entities.User", b =>

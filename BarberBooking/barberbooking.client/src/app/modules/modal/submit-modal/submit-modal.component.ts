@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-submit-modal',
@@ -7,7 +8,11 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class SubmitModalComponent {
   @Output() OnClose = new EventEmitter();
-  @Output() OnSubmit = new EventEmitter();
+  @Output() OnSubmit = new EventEmitter<string>();
+
+  constructor(
+    public acriveModal: NgbActiveModal,
+  ) { }
 
   close() {
     this.OnClose.emit();
@@ -16,6 +21,4 @@ export class SubmitModalComponent {
   submit() {
     this.OnSubmit.emit();
   }
-
-
 }

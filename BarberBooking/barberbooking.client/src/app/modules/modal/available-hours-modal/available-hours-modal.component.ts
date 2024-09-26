@@ -11,9 +11,15 @@ export class AvailableHoursModalComponent implements OnInit {
   @Input() date!: Date;
   @Input() availableHours!: string[];
   @Output() OnClose = new EventEmitter();
-  @Output() OnSubmit = new EventEmitter();
+  @Output() OnSubmit = new EventEmitter<string>();
+
+  currentHours!: string;
   constructor(public activeModal:NgbActiveModal) {
 
+  }
+
+  setCurrentHours(selectedHours:string) {
+    this.currentHours = selectedHours;
   }
 
   close() {
@@ -21,7 +27,8 @@ export class AvailableHoursModalComponent implements OnInit {
   }
 
   submit() {
-    this.OnSubmit.emit();
+    this.OnSubmit.emit(this.currentHours);
+    close();
   }
 
 

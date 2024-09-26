@@ -10,6 +10,8 @@ import { FullCalendarModule } from '@fullcalendar/angular';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AvailableHoursModalComponent } from './modules/modal/available-hours-modal/available-hours-modal.component';
 import { SubmitModalComponent } from './modules/modal/submit-modal/submit-modal.component';
+import { FormsModule } from '@angular/forms';
+import { CreateReservationComponent } from './modules/create-reservation/create-reservation.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,8 @@ import { SubmitModalComponent } from './modules/modal/submit-modal/submit-modal.
     BookingSearchComponent,
     BookingCalendarComponent,
     AvailableHoursModalComponent,
-    SubmitModalComponent
+    SubmitModalComponent,
+    CreateReservationComponent
     
   ],
   imports: [
@@ -26,7 +29,8 @@ import { SubmitModalComponent } from './modules/modal/submit-modal/submit-modal.
     HttpClientModule,
     AppRoutingModule,
     FullCalendarModule,
-    NgbModule
+    NgbModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,4 +1,4 @@
-import { Component, TemplateRef, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, TemplateRef, inject } from '@angular/core';
 import { Reservation } from '../../../models/reservation.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap'
 
@@ -9,10 +9,21 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap'
 })
 export class BookingSearchComponent {
 
+  @Output() DateRecived = new EventEmitter<Date>();
   allReservations: Reservation[] = [];
   private modalService = inject(NgbModal);
+  private selectedDate?: Date;
   constructor() {
 
+  }
+
+  OnDateRecived() {
+    this.DateRecived.emit(this.selectedDate);
+  }
+
+  OnDateSelected(date: Date) {
+    this.selectedDate = date;
+    this.OnDateRecived();
   }
 
   open(template:TemplateRef<any>){

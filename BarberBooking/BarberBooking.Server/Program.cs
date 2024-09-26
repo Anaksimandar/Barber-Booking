@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddScoped<ISeedingService, SeedingService>();
 builder.Services.AddScoped<IReservationsService, ReservationService>();
+builder.Services.AddScoped<IServiceTypeService, ServiceTypeService>();
 builder.Services.AddDbContext<BarberBookingContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -52,11 +53,11 @@ using (var scope = app.Services.CreateScope())
     var seedingService = services.GetRequiredService<ISeedingService>();
     var db = services.GetRequiredService<BarberBookingContext>();
 
-    if (seedingService != null && db.Database.EnsureCreated())
+    if (seedingService != null && !db.Database.EnsureCreated())
     {
         await seedingService.SeedServices();
-        await seedingService.SeedUsers();
         await seedingService.SeedReservations();
+        await seedingService.SeedUsers();
     }
 
     

@@ -12,6 +12,7 @@ import { AvailableHoursModalComponent } from './modules/modal/available-hours-mo
 import { SubmitModalComponent } from './modules/modal/submit-modal/submit-modal.component';
 import { FormsModule } from '@angular/forms';
 import { CreateReservationComponent } from './modules/create-reservation/create-reservation.component';
+import { NavigationComponent } from './modules/navigation/navigation.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { CreateReservationComponent } from './modules/create-reservation/create-
     BookingCalendarComponent,
     AvailableHoursModalComponent,
     SubmitModalComponent,
-    CreateReservationComponent
+    CreateReservationComponent,
+    NavigationComponent
     
   ],
   imports: [

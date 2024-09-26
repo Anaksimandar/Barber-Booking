@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ServiceType } from '../../../models/service-type.model';
 import { HttpClient } from '@angular/common/http';
 import { Reservation } from '../../../models/reservation.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-create-reservation',
@@ -14,16 +15,15 @@ export class CreateReservationComponent implements OnInit{
   serviceTypes: ServiceType[] = [];
   public selectedDate!: Date;
 
-  constructor(private httpClient:HttpClient) {
+  constructor(private httpClient: HttpClient, private notification:ToastrService) {
 
   }
 
   addReservation(): void {
     var serviceTypeId: number = this.selectedType.id;
-    alert(serviceTypeId);
     this.httpClient.post<any>("https://localhost:7030/api/reservation", serviceTypeId).subscribe(
-        (result: any) => {
-        alert(result);
+      (result: any) => {
+        this.notification.success("Reservation has been created succesfuly");
       },
       error => alert(error)
     )

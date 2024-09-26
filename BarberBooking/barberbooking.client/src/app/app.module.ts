@@ -13,6 +13,11 @@ import { SubmitModalComponent } from './modules/modal/submit-modal/submit-modal.
 import { FormsModule } from '@angular/forms';
 import { CreateReservationComponent } from './modules/create-reservation/create-reservation.component';
 import { NavigationComponent } from './modules/navigation/navigation.component';
+import { ListReservationsComponent } from './modules/list-reservations/list-reservations.component';
+import { SignUpComponent } from './modules/sign-up/sign-up.component';
+import { NotificationComponent } from './modules/notification/notification.component';
+import { ToastrModule } from 'ngx-toastr';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -23,7 +28,10 @@ import { NavigationComponent } from './modules/navigation/navigation.component';
     AvailableHoursModalComponent,
     SubmitModalComponent,
     CreateReservationComponent,
-    NavigationComponent
+    NavigationComponent,
+    ListReservationsComponent,
+    SignUpComponent,
+    NotificationComponent
     
   ],
   imports: [
@@ -32,7 +40,13 @@ import { NavigationComponent } from './modules/navigation/navigation.component';
     AppRoutingModule,
     FullCalendarModule,
     NgbModule,
-    FormsModule
+    FormsModule,
+    BrowserAnimationsModule, // Required for animations
+    ToastrModule.forRoot({
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]

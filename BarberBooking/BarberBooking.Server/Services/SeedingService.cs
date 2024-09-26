@@ -18,13 +18,15 @@ namespace BarberBooking.Server.Services
                 List<Reservation> reservations = new List<Reservation>(){
                     new Reservation()
                     {
-                        CreatedAt = DateTime.UtcNow,
-                        UserId = 1
+                        CreatedAt = DateTime.UtcNow.AddMinutes(-180),
+                        UserId = 1,
+                        ServiceTypeId = 5
                     },
                     new Reservation()
                     {
-                        CreatedAt = DateTime.UtcNow,
-                        UserId = 1
+                        CreatedAt = DateTime.UtcNow.AddMinutes(-240),
+                        UserId = 1,
+                        ServiceTypeId = 6
                     },
                 };
 
@@ -36,32 +38,32 @@ namespace BarberBooking.Server.Services
 
         public async Task SeedServices()
         {
-            if (!_db.Services.Any())
+            if (!_db.ServiceTypes.Any())
             {
-                List<Service> services = new List<Service>() {
-                    new Service()
+                List<ServiceType> services = new List<ServiceType>() {
+                    new ServiceType()
                     {
                         Name="Basic haircut",
                         Price = 20,
                     },
-                    new Service()
+                    new ServiceType()
                     {
                         Name="Bear cut",
                         Price = 10,
                     },
-                    new Service()
+                    new ServiceType()
                     {
                         Name="Fade",
                         Price = 30
                     },
-                    new Service()
+                    new ServiceType()
                     {
                         Name="Fixing",
                         Price = 10,
                     }
                 };
 
-                await _db.Services.AddRangeAsync(services);
+                await _db.ServiceTypes.AddRangeAsync(services);
                 await _db.SaveChangesAsync();
             }
         }

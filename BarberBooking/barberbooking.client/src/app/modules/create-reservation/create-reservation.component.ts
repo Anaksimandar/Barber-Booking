@@ -12,7 +12,7 @@ export class CreateReservationComponent implements OnInit{
   
   public selectedType!: ServiceType;
   serviceTypes: ServiceType[] = [];
-  public selectedDate?: Date;
+  public selectedDate!: Date;
 
   constructor(private httpClient:HttpClient) {
 

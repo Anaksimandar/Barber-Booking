@@ -1,4 +1,5 @@
-﻿using BarberBooking.Server.Services;
+﻿using BarberBooking.Server.Entities;
+using BarberBooking.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BarberBooking.Server.Controllers
@@ -19,6 +20,16 @@ namespace BarberBooking.Server.Controllers
         { 
             var reservations = await _reservationsService.GetReservations();
             return Ok(reservations);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateReservation([FromBody]int serviceTypeId)
+        {
+            var newReservation = await _reservationsService.CreateReservation(serviceTypeId);
+
+            //return CreatedAtAction(nameof(CreateReservation), new { id = newReservation.Id });
+
+            return Ok(newReservation);
         }
     }
 }

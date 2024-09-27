@@ -7,6 +7,7 @@ import { Reservation } from '../../../models/reservation.model';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { AvailableHoursModalComponent } from '../modal/available-hours-modal/available-hours-modal.component';
 import { SubmitModalComponent } from 'src/app/modules/modal/submit-modal/submit-modal.component';
+import { ToastrService } from 'ngx-toastr';
 interface StartEndDate {
   startDate: Date,
   endDate: Date
@@ -29,7 +30,7 @@ export class BookingCalendarComponent implements OnInit {
   private modalService = inject(NgbModal);
   private submitModalRef!: NgbModalRef;
   private choosenBookingDate!: Date;
-  constructor(private http:HttpClient) {
+  constructor(private http:HttpClient, private notification:ToastrService) {
 
   }
   calendarOptions: CalendarOptions = {
@@ -44,12 +45,15 @@ export class BookingCalendarComponent implements OnInit {
       result => {
         this.calendarOptions.events = result.map(booking => ({
           title: booking.userId?.toString(),
-          start: new Date(booking.createdAt!),
+          start: new Date(booking.dateOfReservation!),
           allDay: false
         })),
         this.reservations = result;
       },
-      error => alert(error)
+      error => {
+        console.log(error);
+        this.notification.error(error.message);
+      }
     )
   }
 
@@ -122,8 +126,8 @@ export class BookingCalendarComponent implements OnInit {
     const formatedDate: string = this.dateFormating(date);
     var bookedHours: any[] = [];
     this.reservations.forEach(r => {
-      const createdAtFormated: string = this.dateFormating(r.createdAt!); // m/d/y/h:m
-      const endingAtFormated: string = this.dateFormating(r.endingAt!);
+      const createdAtFormated: string = this.dateFormating(r.dateOfReservation!); // m/d/y/h:m
+      const endingAtFormated: string = this.dateFormating(r.dateTimeOfEndingService!);
       const createdAtWithoutHoursMins = createdAtFormated.split(",")[0] + createdAtFormated.split(",")[1] ;
       const formatedDateWithoutHoursMins = formatedDate.split(",")[0] + formatedDate.split(",")[1]
       if (createdAtWithoutHoursMins == formatedDateWithoutHoursMins) {

@@ -23,13 +23,13 @@ namespace BarberBooking.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateReservation([FromBody]int serviceTypeId)
+        public async Task<ActionResult> CreateReservation([FromBody] NewReservation newReservation)
         {
-            var newReservation = await _reservationsService.CreateReservation(serviceTypeId);
+            await _reservationsService.CreateReservation(newReservation);
 
             //return CreatedAtAction(nameof(CreateReservation), new { id = newReservation.Id });
 
-            return Ok(newReservation);
+            return Ok();
         }
     }
 }

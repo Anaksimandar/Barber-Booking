@@ -1,6 +1,10 @@
+import { ServiceType } from "./service-type.model"
+
 export interface Reservation {
   id?: number,
   userId?: number,
-  createdAt?: Date,
-  endingAt?: Date
+  serviceType?: ServiceType
+  serviceTypeId?: number,
+  dateOfReservation?: Date,
+  dateTimeOfEndingService?: Date
 }

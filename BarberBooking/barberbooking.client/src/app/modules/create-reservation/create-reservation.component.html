@@ -4,7 +4,7 @@
 </select>
 <div>
   <h5>Choose booking time:</h5>
-  <p>{{selectedDate | date:'fullDate'}}</p>
+  <p>{{selectedDate | date:'dd/MM/yyyy HH:mm'}}</p>
 </div>
 <app-booking-search (DateRecived)="onDateRecived($event)"></app-booking-search>
 <div>

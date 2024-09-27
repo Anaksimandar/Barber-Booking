@@ -12,22 +12,21 @@ namespace BarberBooking.Server.Services
             _db = db;
         }
 
-        public async Task<Reservation> CreateReservation(int serviceTypeId)
+        public async Task CreateReservation(NewReservation newReservation)
         {
-            var createdReservation = new Reservation()
+            var reservation = new Reservation()
             {
-                UserId = 1,
-                ServiceTypeId = serviceTypeId
+                ServiceTypeId = newReservation.ServiceTypeId,
+                UserId = newReservation.UserId,
+                DateOfReservation = newReservation.DateOfReservation
             };
-            await _db.Reservations.AddAsync(createdReservation);
+            await _db.Reservations.AddAsync(reservation);
             await _db.SaveChangesAsync();
-
-            return createdReservation;
         }
 
         public async Task<List<Reservation>> GetReservations()
         {
-            var reservations = await _db.Reservations.Include(r => r.ServiceTypeId)
+            var reservations = await _db.Reservations.Include(r => r.ServiceType)
                 .ToListAsync();
 
             return reservations;

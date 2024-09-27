@@ -16,19 +16,19 @@ namespace BarberBooking.Server.Entities
         public int ServiceTypeId { get; set; }
         public ServiceType ServiceType { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime DateOfReservation { get; set; }
 
         [NotMapped]
-        public DateTime EndingAt
+        public DateTime DateTimeOfEndingService
         {
             get
             {
                 if(ServiceType != null)
                 {
-                    CreatedAt.AddMinutes(ServiceType.Duration);
+                    DateOfReservation.AddMinutes(ServiceType.Duration);
                 }
 
-                return CreatedAt;
+                return DateOfReservation;
             }
         }
 

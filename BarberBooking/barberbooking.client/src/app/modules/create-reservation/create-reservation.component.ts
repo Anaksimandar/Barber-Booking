@@ -3,6 +3,7 @@ import { ServiceType } from '../../../models/service-type.model';
 import { HttpClient } from '@angular/common/http';
 import { Reservation } from '../../../models/reservation.model';
 import { ToastrService } from 'ngx-toastr';
+import { NewReservationModel } from '../../../models/new-reservation-model';
 
 @Component({
   selector: 'app-create-reservation',
@@ -21,11 +22,14 @@ export class CreateReservationComponent implements OnInit{
 
   addReservation(): void {
     var serviceTypeId: number = this.selectedType.id;
-    this.httpClient.post<any>("https://localhost:7030/api/reservation", serviceTypeId).subscribe(
+    var newReservation: NewReservationModel = { serviceTypeId: serviceTypeId, dateOfReservation: this.selectedDate, userId: 1 };
+    this.httpClient.post("https://localhost:7030/api/reservation", newReservation).subscribe(
       (result: any) => {
         this.notification.success("Reservation has been created succesfuly");
       },
-      error => alert(error)
+      error => {
+        this.notification.error(error.message)
+      }
     )
   }
 
@@ -39,7 +43,7 @@ export class CreateReservationComponent implements OnInit{
         this.serviceTypes = result;
       },
       (error) => {
-        alert(error);
+        this.notification.error(error.message)
       }
     )
   }

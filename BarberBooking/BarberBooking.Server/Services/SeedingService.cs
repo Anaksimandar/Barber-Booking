@@ -18,13 +18,13 @@ namespace BarberBooking.Server.Services
                 List<Reservation> reservations = new List<Reservation>(){
                     new Reservation()
                     {
-                        CreatedAt = DateTime.UtcNow.AddMinutes(-180),
+                        DateOfReservation = DateTime.UtcNow.AddMinutes(-180),
                         UserId = 1,
                         ServiceTypeId = 5
                     },
                     new Reservation()
                     {
-                        CreatedAt = DateTime.UtcNow.AddMinutes(-240),
+                        DateOfReservation = DateTime.UtcNow.AddMinutes(-240),
                         UserId = 1,
                         ServiceTypeId = 6
                     },

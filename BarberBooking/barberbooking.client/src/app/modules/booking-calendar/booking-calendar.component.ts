@@ -8,6 +8,7 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { AvailableHoursModalComponent } from '../modal/available-hours-modal/available-hours-modal.component';
 import { SubmitModalComponent } from 'src/app/modules/modal/submit-modal/submit-modal.component';
 import { ToastrService } from 'ngx-toastr';
+import { DateEmiterService } from '../../services/date-emiter.service';
 interface StartEndDate {
   startDate: Date,
   endDate: Date
@@ -21,7 +22,6 @@ interface StartEndDate {
 
 
 export class BookingCalendarComponent implements OnInit {
-  @Output() dateSelected = new EventEmitter<Date>();
   private readonly minHour: number = 10;
   private readonly maxHour: number = 15;
   private readonly gapMinutes: number = 30; // it will be changed to booking.service.length
@@ -30,7 +30,7 @@ export class BookingCalendarComponent implements OnInit {
   private modalService = inject(NgbModal);
   private submitModalRef!: NgbModalRef;
   private choosenBookingDate!: Date;
-  constructor(private http:HttpClient, private notification:ToastrService) {
+  constructor(private http:HttpClient, private notification:ToastrService, private dateEmitter:DateEmiterService) {
 
   }
   calendarOptions: CalendarOptions = {
@@ -156,8 +156,7 @@ export class BookingCalendarComponent implements OnInit {
       const [hours, mins] = currentHours.split(":");
       this.choosenBookingDate.setHours(parseInt(hours));
       this.choosenBookingDate.setMinutes(parseInt(mins));
-      this.dateSelected.emit(this.choosenBookingDate);
-      alert("Hours selected:" + currentHours);
+      this.dateEmitter.setDate(this.choosenBookingDate);
       //this.confirmAvaiableHourseModal();
     })
   }

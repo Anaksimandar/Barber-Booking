@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Reservation } from '../../../models/reservation.model';
 import { ToastrService } from 'ngx-toastr';
 import { NewReservationModel } from '../../../models/new-reservation-model';
+import { DateEmiterService } from '../../services/date-emiter.service';
 
 @Component({
   selector: 'app-create-reservation',
@@ -14,9 +15,9 @@ export class CreateReservationComponent implements OnInit{
   
   public selectedType!: ServiceType;
   serviceTypes: ServiceType[] = [];
-  public selectedDate!: Date;
+  public selectedDate!: Date | null;
 
-  constructor(private httpClient: HttpClient, private notification:ToastrService) {
+  constructor(private httpClient: HttpClient, private notification:ToastrService, private dateEmiterService:DateEmiterService) {
 
   }
 
@@ -33,11 +34,12 @@ export class CreateReservationComponent implements OnInit{
     )
   }
 
-  onDateRecived(date: Date) {
-    this.selectedDate = date;
-  }
 
   ngOnInit() {
+    this.dateEmiterService.selectedDate$.subscribe((date:Date | null) => {
+      this.selectedDate = date;
+      alert(date);
+    })
     this.httpClient.get<ServiceType[]>("https://localhost:7030/api/service-type").subscribe(
       (result) => {
         this.serviceTypes = result;

@@ -17,15 +17,6 @@ export class BookingSearchComponent {
 
   }
 
-  OnDateRecived() {
-    this.DateRecived.emit(this.selectedDate);
-  }
-
-  OnDateSelected(date: Date) {
-    this.selectedDate = date;
-    this.OnDateRecived();
-  }
-
   open(template:TemplateRef<any>){
     this.modalService.open(template, {size:'lg', backdrop: true });
   }

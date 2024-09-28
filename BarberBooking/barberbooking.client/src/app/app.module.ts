@@ -18,6 +18,7 @@ import { SignUpComponent } from './modules/sign-up/sign-up.component';
 import { NotificationComponent } from './modules/notification/notification.component';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DateEmiterService } from './services/date-emiter.service';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     NavigationComponent,
     ListReservationsComponent,
     SignUpComponent,
-    NotificationComponent
+    NotificationComponent,
+    
     
   ],
   imports: [
@@ -48,7 +50,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
       preventDuplicates: true,
     })
   ],
-  providers: [],
+  providers: [DateEmiterService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

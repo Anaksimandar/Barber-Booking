@@ -17,12 +17,16 @@ namespace BarberBooking.Server.Services
         public async Task CreateReservation(NewReservation newReservation)
         {
             // we should check on backend is reservation date valid (is there any other reservation with same date)
-
+            DateTime formatedDateOfReservation = newReservation.DateOfReservation.ToLocalTime();
+            if(formatedDateOfReservation < DateTime.Now)
+            {
+                throw new ArgumentException("Time of reservation cannot be in past");
+            }
             var reservation = new Reservation()
             {
                 ServiceTypeId = newReservation.ServiceTypeId,
                 UserId = newReservation.UserId,
-                DateOfReservation = newReservation.DateOfReservation.ToLocalTime(),
+                DateOfReservation = formatedDateOfReservation,
             };
             await _db.Reservations.AddAsync(reservation);
             await _db.SaveChangesAsync();
@@ -64,17 +68,30 @@ namespace BarberBooking.Server.Services
 
         public async Task UpdateReservation(int reservationId, NewReservation newReservation)
         {
+            DateTime formatedDateOfReservation = newReservation.DateOfReservation.ToLocalTime();
 
-            
-            Reservation? reservation = await _db.Reservations.Include(r => r.ServiceType).FirstOrDefaultAsync(r => r.Id == reservationId);
+            /*
+             * we shoud check doest reservation with provided resId have userId of auth user.
+             * Why ? Because if we dont check it means anyone could just add rndres id and change date of that reservation
+            */
+            if (formatedDateOfReservation < DateTime.Now)
+            {
+                throw new ArgumentException("Time of reservation cannot be in past");
+            }
 
-            if (reservation == null)
+            bool reservationExists =  _db.Reservations.Where(r => r.Id == reservationId).Any();
+
+            if (!reservationExists)
             {
                 throw new ArgumentException("Reservation doesnt exists");
             }
-
-            reservation.DateOfReservation = newReservation.DateOfReservation.ToLocalTime();
-            reservation.ServiceType.Id = newReservation.ServiceTypeId;
+            Reservation reservation = new Reservation()
+            {
+                Id = reservationId,
+                UserId = newReservation.UserId,
+                DateOfReservation = formatedDateOfReservation,
+                ServiceTypeId = newReservation.ServiceTypeId
+            };
             // validation for date
             _db.Reservations.Update(reservation);
             await _db.SaveChangesAsync();

@@ -16,10 +16,14 @@
           <strong>{{ reservation.serviceType?.name }}</strong><br>
           {{ reservation.serviceType?.description }}<br>
           <span *ngIf="reservation.serviceType?.price">
-            Price: {{ reservation.serviceType?.price | currency:'USD' }}
+            Price: {{ reservation.serviceType?.price | currency:'EU' }}
           </span>
         </td>
         <td>{{ reservation.dateOfReservation | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td class="d-flex justify-content-center">
+          <button (click)="openEditReservationModal(reservation)" class="btn btn-secondary">Edit</button>
+          <button (click)="deleteReservation(reservation.id)" class="btn btn-danger">Delete</button>
+        </td>
       </tr>
     </tbody>
   </table>

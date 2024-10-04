@@ -5,11 +5,17 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class DateEmiterService {
-  private selectedDate = new BehaviorSubject<Date | null>(null);
-  selectedDate$ = this.selectedDate.asObservable();
+  private existingDate = new BehaviorSubject<Date | null>(null);
+  private newDate = new BehaviorSubject<Date | null>(null);
+  existingDate$ = this.existingDate.asObservable();
+  newDate$ = this.newDate.asObservable();
 
-  setDate(date: Date) {
-    this.selectedDate.next(date);
+  setExistingDate(date: Date) {
+    this.existingDate.next(date);
+  }
+
+  setNewDate(date: Date) {
+    this.newDate.next(date);
   }
 
   constructor() { }

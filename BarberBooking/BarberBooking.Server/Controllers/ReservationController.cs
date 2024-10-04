@@ -31,5 +31,34 @@ namespace BarberBooking.Server.Controllers
 
             return Ok();
         }
+
+        [HttpDelete("{reservationId}")]
+
+        public async Task<IActionResult> DeleteReservation(int reservationId)
+        {
+            bool isDeleted = await _reservationsService.DeleteReservation(reservationId);
+
+            if(isDeleted)
+            {
+                return NoContent();
+            }
+
+            return NotFound();
+        }
+
+        [HttpPut("{reservationId}")]
+        public async Task<IActionResult> UpdateReservation(int reservationId,[FromBody] NewReservation newReservation)
+        {
+            try
+            {
+                await _reservationsService.UpdateReservation(reservationId, newReservation);
+            }
+            catch (ArgumentException argErr)
+            {
+                return BadRequest(argErr);
+            }
+
+            return Ok();
+        }
     }
 }

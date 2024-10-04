@@ -45,7 +45,7 @@ namespace BarberBooking.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reservations");
+                    b.ToTable("Reservations", (string)null);
                 });
 
             modelBuilder.Entity("BarberBooking.Server.Entities.ServiceType", b =>
@@ -71,7 +71,7 @@ namespace BarberBooking.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ServiceTypes");
+                    b.ToTable("ServiceTypes", (string)null);
                 });
 
             modelBuilder.Entity("BarberBooking.Server.Entities.User", b =>
@@ -100,7 +100,7 @@ namespace BarberBooking.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("BarberBooking.Server.Entities.Reservation", b =>

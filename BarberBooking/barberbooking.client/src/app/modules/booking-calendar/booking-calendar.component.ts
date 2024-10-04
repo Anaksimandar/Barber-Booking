@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CalendarOptions } from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
@@ -100,7 +100,6 @@ export class BookingCalendarComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadBookings();
-      
   }
 
   handleDateClick(arg: any): void {
@@ -143,21 +142,24 @@ export class BookingCalendarComponent implements OnInit {
   }
 
   openAvailableHoursModal(date: Date, bookedHours: StartEndDate[]): void {
-    const availableHours = this.computeAvailableHours(bookedHours);
-
-    this.availableHoursModalRef = this.modalService.open(AvailableHoursModalComponent, {backdrop:false, size:'md'});
+    const availableHours = this.computeAvailableHours(bookedHours); // calculating avaiable hours
+    
+    this.availableHoursModalRef = this.modalService.open(AvailableHoursModalComponent, { backdrop: false, size: 'md' });
+    this.availableHoursModalRef.componentInstance.initialHours = availableHours[0];
     this.availableHoursModalRef.componentInstance.date = date;
     this.availableHoursModalRef.componentInstance.availableHours = availableHours;
     this.availableHoursModalRef.componentInstance.OnClose.subscribe(() => {
       this.closeAvaiableHoursModal();
     });
     this.availableHoursModalRef.componentInstance.OnSubmit.subscribe((currentHours: string) => {
+      alert(currentHours);
       //const [hours, mins] = currentHours.split(":");
       const [hours, mins] = currentHours.split(":");
       this.choosenBookingDate.setHours(parseInt(hours));
       this.choosenBookingDate.setMinutes(parseInt(mins));
-      this.dateEmitter.setDate(this.choosenBookingDate);
-      //this.confirmAvaiableHourseModal();
+      this.dateEmitter.setExistingDate(this.choosenBookingDate);
+      this.dateEmitter.setNewDate(this.choosenBookingDate);
+      this.closeAvaiableHoursModal();
     })
   }
 

@@ -19,6 +19,7 @@ import { NotificationComponent } from './modules/notification/notification.compo
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DateEmiterService } from './services/date-emiter.service';
+import { EditReservationModalComponent } from 'src/app/modules/modal/edit-reservation-modal/edit-reservation-modal.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { DateEmiterService } from './services/date-emiter.service';
     ListReservationsComponent,
     SignUpComponent,
     NotificationComponent,
+    EditReservationModalComponent,
     
     
   ],

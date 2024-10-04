@@ -9,10 +9,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap'
 })
 export class BookingSearchComponent {
 
-  @Output() DateRecived = new EventEmitter<Date>();
   allReservations: Reservation[] = [];
   private modalService = inject(NgbModal);
-  private selectedDate?: Date;
   constructor() {
 
   }

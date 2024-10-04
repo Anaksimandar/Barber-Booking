@@ -6,5 +6,7 @@ namespace BarberBooking.Server.Services
     {
         Task<List<Reservation>> GetReservations();
         Task CreateReservation(NewReservation newReservation);
+        Task<bool> DeleteReservation(int reservationId);
+        Task UpdateReservation(int reservationId, NewReservation newReservation);
     }
 }

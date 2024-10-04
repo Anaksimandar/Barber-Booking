@@ -10,12 +10,12 @@ import Swiper from 'swiper';
 export class AvailableHoursModalComponent implements OnInit {
   @Input() date!: Date;
   @Input() availableHours!: string[];
+  @Input() initialHours!: string;
   @Output() OnClose = new EventEmitter();
   @Output() OnSubmit = new EventEmitter<string>();
 
   currentHours!: string;
-  constructor(public activeModal:NgbActiveModal) {
-
+  constructor() {
   }
 
   setCurrentHours(selectedHours:string) {
@@ -28,11 +28,11 @@ export class AvailableHoursModalComponent implements OnInit {
 
   submit() {
     this.OnSubmit.emit(this.currentHours);
-    close();
   }
 
 
   ngOnInit(): void {
+    this.currentHours = this.initialHours;
     const swiper = new Swiper('.swiper-container', {
       direction: 'vertical', // or 'horizontal'
       slidesPerView: 'auto',

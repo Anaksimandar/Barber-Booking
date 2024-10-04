@@ -1,5 +1,5 @@
-export interface NewReservationModel {
+export interface NewReservation {
   userId: number,
   serviceTypeId: number,
-  dateOfReservation: Date | null,
+  dateOfReservation: Date | null ,
 }

@@ -3,3 +3,15 @@
 ################################################################################
 
 /BarberBooking/.vs/BarberBooking
+/BarberBooking/BarberBooking.Server/bin/Debug/net8.0
+/BarberBooking/BarberBooking.Server/obj/Debug/net8.0/ref
+/BarberBooking/BarberBooking.Server/obj/Debug/net8.0/refint
+/BarberBooking/BarberBooking.Server/obj/Debug/net8.0/staticwebassets
+/BarberBooking/.vs/ProjectEvaluation
+/BarberBooking/BarberBooking.Server/obj/Debug/net8.0/apphost.exe
+/BarberBooking/BarberBooking.Server/obj/Debug/net8.0/BarberBooking.Server.AssemblyInfo.cs
+/BarberBooking/BarberBooking.Server/obj/Debug/net8.0/BarberBooking.Server.AssemblyInfoInputs.cache
+*.BuildWithSkipAnalyzers
+*.CopyComplete
+*.cache
+.pdb

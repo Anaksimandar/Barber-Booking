@@ -1,0 +1,23 @@
+{
+  "Version": 1,
+  "Hash": "EldakgrpCoV358fFMp4AQHkDnyvC0/x2q4KUU6uFb7c=",
+  "Source": "BarberBooking.Server",
+  "BasePath": "_content/BarberBooking.Server",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [
+    {
+      "Identity": "A:\\Aleksandar\\Barber-Booking\\BarberBooking\\barberbooking.client\\barberbooking.client.esproj",
+      "Version": 2,
+      "Source": "barberbooking.client",
+      "GetPublishAssetsTargets": "GetCurrentProjectPublishStaticWebAssetItems",
+      "AdditionalPublishProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalPublishPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier;SelfContained",
+      "GetBuildAssetsTargets": "GetCurrentProjectBuildStaticWebAssetItems",
+      "AdditionalBuildProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalBuildPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier;SelfContained"
+    }
+  ],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

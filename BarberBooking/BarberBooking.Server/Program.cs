@@ -56,11 +56,12 @@ using (var scope = app.Services.CreateScope())
     if (seedingService != null && !db.Database.EnsureCreated())
     {
         await seedingService.SeedServices();
-        await seedingService.SeedReservations();
+        await seedingService.SeedRoles();
         await seedingService.SeedUsers();
+        await seedingService.SeedReservations();
     }
 
-    
+
 }
 
 

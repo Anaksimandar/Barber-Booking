@@ -7,5 +7,6 @@ namespace BarberBooking.Server.Services
         Task SeedUsers();
         Task SeedReservations();
         Task SeedServices();
+        Task SeedRoles();
     }
 }

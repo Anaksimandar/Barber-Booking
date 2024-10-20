@@ -1,4 +1,5 @@
 ﻿using BarberBooking.Server.Entities;
+using BarberBooking.Server.Models;
 
 namespace BarberBooking.Server.Services
 {
@@ -19,13 +20,13 @@ namespace BarberBooking.Server.Services
                     new Reservation()
                     {
                         DateOfReservation = DateTime.UtcNow.AddMinutes(-180),
-                        UserId = 1,
+                        UserId = 4,
                         ServiceTypeId = 5
                     },
                     new Reservation()
                     {
                         DateOfReservation = DateTime.UtcNow.AddMinutes(-240),
-                        UserId = 1,
+                        UserId = 5,
                         ServiceTypeId = 6
                     },
                 };
@@ -78,18 +79,35 @@ namespace BarberBooking.Server.Services
                         Name="Aleksandar",
                         Surname = "Petrovic",
                         Email = "acodex00@gmail.com",
-                        Password = "12345"
+                        Password = "12345",
+                        RoleId = 1
                     },
                     new User()
                     {
                         Name="Milos",
                         Surname = "Ilic",
                         Email = "miki223@gmail.com",
-                        Password = "54321"
+                        Password = "54321",
+                        RoleId = 2
                     }
                 };
 
                 await _db.Users.AddRangeAsync(users);
+                await _db.SaveChangesAsync();
+            }
+            
+        }
+
+        public async Task SeedRoles()
+        {
+            List<Role> roles = new List<Role> {
+                new Role() { Name= RoleType.User},
+                new Role() { Name = RoleType.Admin}
+            };
+
+            if (!_db.Roles.Any())
+            {
+                await _db.Roles.AddRangeAsync(roles);
                 await _db.SaveChangesAsync();
             }
             

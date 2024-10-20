@@ -1,4 +1,4 @@
-import { Component, TemplateRef, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, TemplateRef, inject } from '@angular/core';
 import { Reservation } from '../../../models/reservation.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap'
 

@@ -28,9 +28,11 @@
     "@popperjs/core": "^2.11.6",
     "bootstrap": "^5.3.3",
     "jest-editor-support": "*",
+    "ngx-toastr": "^19.0.0",
     "run-script-os": "*",
     "rxjs": "~7.8.0",
     "swiper": "^11.1.9",
+    "toastr": "^2.1.4",
     "tslib": "^2.3.0",
     "zone.js": "~0.13.0"
   },

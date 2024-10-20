@@ -1,0 +1,72 @@
+/* Container styling */
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #C8E6E4;
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+form {
+  background-color: #FFFFFF;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 360px;
+  text-align: center;
+}
+
+/* Form title */
+form h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #333333;
+}
+
+/* Form subtitle */
+form p {
+  font-size: 14px;
+  margin-bottom: 30px;
+  color: #666666;
+}
+
+/* Input fields */
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #CCCCCC;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+/* Button */
+button {
+  width: 100%;
+  padding: 12px;
+  background-color: #80C7B9;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #6FA99D;
+}
+
+/* Sign-in link */
+form a {
+  color: #6FA99D;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+form a:hover {
+  text-decoration: underline;
+}

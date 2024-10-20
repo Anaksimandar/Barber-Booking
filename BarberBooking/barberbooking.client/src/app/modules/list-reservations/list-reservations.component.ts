@@ -1,0 +1,92 @@
+import { Component, Inject, OnInit } from '@angular/core';
+import { Reservation } from '../../../models/reservation.model';
+import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { EditReservationModalComponent } from '../modal/edit-reservation-modal/edit-reservation-modal.component';
+import { DateEmiterService } from '../../services/date-emiter.service';
+import { NewReservation } from '../../../models/new-reservation-model';
+
+@Component({
+  selector: 'app-list-reservations',
+  templateUrl: './list-reservations.component.html',
+  styleUrls: ['./list-reservations.component.css']
+})
+export class ListReservationsComponent implements OnInit {
+  public allReservations: Reservation[];
+  private editModalRef!: NgbModalRef;
+  private currenReservation?: Reservation;
+
+  constructor(private httpClient: HttpClient, private notification: ToastrService, private modalService: NgbModal, private dateEmitter:DateEmiterService) {
+    this.allReservations = [];
+  }
+  ngOnInit() {
+    this.getAllReservations();
+  }
+
+  openEditReservationModal(reservation: Reservation) {
+    this.currenReservation = reservation;
+    this.dateEmitter.setNewDate(reservation.dateOfReservation);
+    
+    this.editModalRef = this.modalService.open(EditReservationModalComponent);
+    this.editModalRef.componentInstance.newReservationDate = reservation.dateOfReservation;
+    this.editModalRef.componentInstance.newReservationService = reservation.serviceType;
+    this.editModalRef.componentInstance.OnClose.subscribe(() => {
+      this.closeEditModal()
+    })
+    this.editModalRef?.componentInstance.OnSubmit.subscribe((newReservation:NewReservation) => {
+      this.submitEditModalRef(newReservation)
+    })
+  }
+
+  closeEditModal() {
+    this.editModalRef?.close();
+  }
+
+  submitEditModalRef(newReservation:NewReservation) {
+    this.editReservation(newReservation)
+    this.closeEditModal();
+  }
+
+  editReservation(newReservation: NewReservation) {
+    this.httpClient.put(`https://localhost:7030/api/reservation/${this.currenReservation?.id}`, newReservation).subscribe(
+      result => {
+        this.notification.success("Reservation has been updated successfully");
+        this.getAllReservations();
+      },
+      error => {
+        this.notification.error(error.message);
+      }
+    )
+  }
+
+
+  deleteReservation(reservationId: number) {
+    this.httpClient.delete(`https://localhost:7030/api/reservation/${reservationId}`).subscribe(
+      result => {
+        this.notification.success("Reservation has been successfully deleted");
+        this.getAllReservations();
+      },
+      error => {
+        this.notification.error("Error with deleting reservation");
+      }
+    )
+  }
+
+  getAllReservations() {
+    this.httpClient.get<Reservation[]>("https://localhost:7030/api/reservation").subscribe(
+      result => {
+        this.allReservations = result;
+        console.log(result);
+      },
+      error => {
+        this.notification.error(error.message);
+      }
+    )
+  }
+
+  //editReservation(reservaton:Reservation) {
+    
+  //}
+
+}

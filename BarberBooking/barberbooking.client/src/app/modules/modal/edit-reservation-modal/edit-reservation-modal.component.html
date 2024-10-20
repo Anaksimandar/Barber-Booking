@@ -1,0 +1,21 @@
+<div>
+  <div class="modal-header">
+    <h4 class="modal-title">Edit reservation</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
+  </div>
+  <div class="modal-body">
+    <h5 class="my-2">Choose barber service:</h5>
+    <select [(ngModel)]="newReservationService" class="form-select w-25">
+      <option *ngFor="let st of serviceTypes" [ngValue]="st">{{st.name}}</option>
+    </select>
+    <div>
+      <h5 class="my-2">Choose booking time:</h5>
+      <p>{{newReservationDate | date:'dd/MM/yyyy HH:mm'}}</p>
+    </div>
+    <app-booking-search></app-booking-search>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-success" (click)="submit()">Save changes</button>
+    <button type="button" class="btn btn-outline-secondary" (click)="close()">Close</button>
+  </div>
+</div>

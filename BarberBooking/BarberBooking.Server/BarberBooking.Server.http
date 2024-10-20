@@ -1,0 +1,6 @@
+@BarberBooking.Server_HostAddress = http://localhost:5137
+
+GET {{BarberBooking.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

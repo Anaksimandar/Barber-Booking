@@ -1,0 +1,1 @@
+A:\Aleksandar\Barber-Booking\BarberBooking\barberbooking.client\obj\Debug\barberbooking.client.esproj.CoreCompileInputs.cache

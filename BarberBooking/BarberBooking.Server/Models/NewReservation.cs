@@ -1,4 +1,4 @@
-﻿namespace BarberBooking.Server.Entities
+﻿namespace BarberBooking.Server.Models
 {
     public class NewReservation
     {

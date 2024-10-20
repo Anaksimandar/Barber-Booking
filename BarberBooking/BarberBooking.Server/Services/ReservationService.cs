@@ -1,4 +1,5 @@
 ﻿using BarberBooking.Server.Entities;
+using BarberBooking.Server.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;

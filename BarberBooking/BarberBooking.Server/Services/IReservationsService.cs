@@ -1,4 +1,5 @@
 ﻿using BarberBooking.Server.Entities;
+using BarberBooking.Server.Models;
 
 namespace BarberBooking.Server.Services
 {

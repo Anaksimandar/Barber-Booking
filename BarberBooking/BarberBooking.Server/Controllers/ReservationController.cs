@@ -1,4 +1,4 @@
-﻿using BarberBooking.Server.Entities;
+﻿using BarberBooking.Server.Models;
 using BarberBooking.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 

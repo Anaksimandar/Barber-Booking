@@ -1,0 +1,23 @@
+<h2>Find avaible dates</h2>
+
+<!--date forms for from / to date-->
+<!--<app-booking-calendar></app-booking-calendar>-->
+
+<ng-template #calendarModal let-modal>
+  <div class="modal-header d-flex justify-content-between">
+    <h4 class="modal-title">Select a Date</h4>
+    <button type="button" class="btn btn-secondary ml-auto" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-booking-calendar></app-booking-calendar>
+  </div>
+  <div class="modal-footer">
+    <button type="button" (click)="modal.dismiss()" class="btn btn-secondary">Close</button>
+  </div>
+</ng-template>
+
+
+<button class="btn btn-primary btn-lg" (click)="open(calendarModal)">Book your barber service!</button>
+

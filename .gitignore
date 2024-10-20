@@ -2,16 +2,14 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/BarberBooking/.vs/BarberBooking
-/BarberBooking/BarberBooking.Server/bin/Debug/net8.0
-/BarberBooking/BarberBooking.Server/obj/Debug/net8.0/ref
-/BarberBooking/BarberBooking.Server/obj/Debug/net8.0/refint
-/BarberBooking/BarberBooking.Server/obj/Debug/net8.0/staticwebassets
-/BarberBooking/.vs/ProjectEvaluation
-/BarberBooking/BarberBooking.Server/obj/Debug/net8.0/apphost.exe
-/BarberBooking/BarberBooking.Server/obj/Debug/net8.0/BarberBooking.Server.AssemblyInfo.cs
-/BarberBooking/BarberBooking.Server/obj/Debug/net8.0/BarberBooking.Server.AssemblyInfoInputs.cache
-*.BuildWithSkipAnalyzers
-*.CopyComplete
+*.vs
+*.user
 *.cache
-.pdb
+bin/
+obj/
+/BarberBooking/BarberBooking.Server/obj/Debug/net8.0/BarberBooking.Server.assets.cache
+/BarberBooking/BarberBooking.Server/obj/Debug/net8.0/BarberBooking.Server.csproj.AssemblyReference.cache
+/BarberBooking/BarberBooking.Server/obj/BarberBooking.Server.csproj.nuget.g.targets
+/BarberBooking/BarberBooking.Server/obj/BarberBooking.Server.csproj.nuget.dgspec.json
+/BarberBooking/BarberBooking.Server/obj/project.assets.json
+/BarberBooking/BarberBooking.Server/obj/project.nuget.cache

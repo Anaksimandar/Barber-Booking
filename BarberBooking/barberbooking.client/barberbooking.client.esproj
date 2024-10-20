@@ -7,4 +7,7 @@
     <!-- Folder where production build objects will be placed -->
     <PublishAssetsDirectory>$(MSBuildProjectDirectory)\dist\barberbooking.client\</PublishAssetsDirectory>
   </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="src\app\modules\modal\" />
+  </ItemGroup>
 </Project>

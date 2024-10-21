@@ -1,6 +1,10 @@
 using BarberBooking.Server.Entities;
+using BarberBooking.Server.Helper.Authentication;
 using BarberBooking.Server.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,10 +14,31 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<ISeedingService, SeedingService>();
 builder.Services.AddScoped<IReservationsService, ReservationService>();
 builder.Services.AddScoped<IServiceTypeService, ServiceTypeService>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+
 builder.Services.AddDbContext<BarberBookingContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+// add to appsettings.json
+var key = Encoding.ASCII.GetBytes("not_that_secure_key");
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddCors(options => 
 {

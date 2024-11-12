@@ -9,7 +9,7 @@ namespace BarberBooking.Server.Entities
 
         [ForeignKey("RoleId")]
         public int RoleId { get; set; }
-        public Role? Role { get; set; }
+        public Role Role { get; set; }
 
         public required string Name { get; set; }
         public required string Surname { get; set; }

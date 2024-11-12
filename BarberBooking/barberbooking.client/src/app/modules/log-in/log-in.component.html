@@ -1,0 +1,16 @@
+<div class="container">
+  <app-navigation></app-navigation>
+
+  <div class="form-container">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <h2>Login</h2>
+
+      <input formControlName="email" placeholder="Email Address">
+      <input formControlName="password" placeholder="Password">
+
+      <button [disabled]="!loginForm.valid" type="submit">Log in</button>
+
+      <p>Don't have account ? <a [routerLink]="['/sign-up']">Sign In</a></p>
+    </form>
+  </div>
+</div>

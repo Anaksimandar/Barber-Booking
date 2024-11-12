@@ -19,33 +19,29 @@ form {
 }
 
   /* Form title */
-form h2 {
-  font-size: 24px;
-  margin-bottom: 10px;
-  color: #333333;
-}
+  form h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #333333;
+  }
 
   /* Form subtitle */
-form p {
-  font-size: 14px;
-  margin-bottom: 30px;
-  color: #666666;
-}
+  form p {
+    font-size: 14px;
+    margin-bottom: 30px;
+    color: #666666;
+  }
 
 /* Input fields */
 input {
+  outline:none;
   width: 100%;
   padding: 12px;
   margin: 10px 0;
   border: 2px solid #CCCCCC;
   border-radius: 5px;
   font-size: 16px;
-}
-
-input:focus {
-  outline: none;
-  border: 2px solid #C8E6E4 ;
-  transition: border 0.3s ease-in;
+  box-sizing: border-box;
 }
 
 /* Button */
@@ -60,15 +56,15 @@ button {
   cursor: pointer;
 }
 
-  button:hover {
-    background-color: #69A897; /* Darker green on hover */
-  }
+button:hover {
+  background-color: #69A897; /* Darker green on hover */
+}
 
 button:disabled {
   background-color: #69A897;
-  color: #fff;
-  cursor: not-allowed;
-  opacity: 0.7;
+  color: #fff; 
+  cursor: not-allowed; 
+  opacity: 0.7; 
 }
 
 /* Sign-in link */
@@ -76,6 +72,10 @@ form a {
   color: #6FA99D;
   text-decoration: none;
   font-size: 14px;
+}
+
+input:focus {
+  border: 2px solid #C8E6E4;
 }
 
 form a:hover {

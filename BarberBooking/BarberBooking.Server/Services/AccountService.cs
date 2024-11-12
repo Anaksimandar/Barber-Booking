@@ -14,6 +14,13 @@ namespace BarberBooking.Server.Services
             _authenticationService = authenticationService;
         }
 
+        public async Task<List<User>> GetUsers()
+        {
+            var users = await _db.Users.Include(u => u.Role).ToListAsync();
+
+            return users;
+        }
+
         public async Task<LoginResponse> Login(LoginUser loginUser)
         {
             if (loginUser.Email == null)
@@ -28,11 +35,6 @@ namespace BarberBooking.Server.Services
                 throw new Exception("User with provided email doesn't exists");
             }
 
-            if(loginUser.Password != loginUser.RepeatedPassword)
-            {
-                throw new Exception("Provided passwords are not same");
-            }
-
             if(user.Password != loginUser.Password)
             {
                 throw new Exception("Mail or passwords are not valid");
@@ -40,12 +42,21 @@ namespace BarberBooking.Server.Services
             // generating token based on email
             var token = _authenticationService.CreateJwtToken(loginUser.Email);
             // returning response object with logged in user and his token
-            return new LoginResponse() { LoginUser = loginUser, Token = token };
+            AuthenticatedUser authenticatedUser = new AuthenticatedUser()
+            {
+                Name = user.Name,
+                Surname = user.Surname,
+                Email = user.Email,
+                Role = user.Role,
+
+            };
+
+            return new LoginResponse() { User = authenticatedUser, Token = token };
         }
 
         public async Task Register(UserRegistration user)
         {
-            if(user.Name == null || user.Surname == null || user.Password == null || user.RepeatPassword == null || user.Email == null)
+            if(user.Name == null || user.Surname == null || user.Password == null || user.ConfirmPassword == null || user.Email == null)
             {
                 throw new Exception("Please check your data");
             }

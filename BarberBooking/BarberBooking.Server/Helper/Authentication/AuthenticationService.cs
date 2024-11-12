@@ -17,8 +17,8 @@ namespace BarberBooking.Server.Helper.Authentication
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var claims = new[]
             {
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.Email, mail),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
             var token = new JwtSecurityToken(

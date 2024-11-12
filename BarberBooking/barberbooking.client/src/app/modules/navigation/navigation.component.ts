@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
+import { AccountService } from '../../services/account.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navigation',
@@ -7,21 +8,14 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./navigation.component.css']
 })
 export class NavigationComponent {
-  constructor(private toastr: ToastrService) { }
-
-  showSuccess(message:string) {
-    this.toastr.success(message);
+  isAuthenticated: boolean = false;
+  constructor(private accountService: AccountService, private router:Router) {
+    this.isAuthenticated = accountService.isAuthenticated();
   }
 
-  showError(message: string) {
-    this.toastr.error(message);
+  logout() {
+    this.accountService.logout();
+    this.router.navigateByUrl("/");
   }
 
-  showWarning(message: string) {
-    this.toastr.warning(message);
-  }
-
-  showInfo(message: string) {
-    this.toastr.info(message);
-  }
 }

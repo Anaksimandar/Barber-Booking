@@ -1,4 +1,5 @@
-﻿using BarberBooking.Server.Models;
+﻿using BarberBooking.Server.Entities;
+using BarberBooking.Server.Models;
 
 namespace BarberBooking.Server.Services
 {
@@ -6,5 +7,6 @@ namespace BarberBooking.Server.Services
     {
         Task Register(UserRegistration user);
         Task<LoginResponse> Login(LoginUser user);
+        Task<List<User>> GetUsers();
     }
 }

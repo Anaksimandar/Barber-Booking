@@ -24,7 +24,7 @@ export class CreateReservationComponent implements OnInit{
   addReservation(): void {
     alert(this.selectedDate);
     var serviceTypeId: number = this.selectedType.id;
-    var newReservation: NewReservation = { serviceTypeId: serviceTypeId, dateOfReservation: this.selectedDate, userId: 1 };
+    var newReservation: NewReservation = { serviceTypeId: serviceTypeId, dateOfReservation: this.selectedDate};
     this.httpClient.post("https://localhost:7030/api/reservation", newReservation).subscribe(
       (result: any) => {
         this.notification.success("Reservation has been created succesfuly");

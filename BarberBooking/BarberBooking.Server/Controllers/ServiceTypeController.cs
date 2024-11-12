@@ -1,9 +1,11 @@
 ﻿using BarberBooking.Server.Entities;
 using BarberBooking.Server.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BarberBooking.Server.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/service-type")]
     public class ServiceTypeController : ControllerBase

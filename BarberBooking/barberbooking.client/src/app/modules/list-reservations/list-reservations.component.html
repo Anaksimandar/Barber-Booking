@@ -11,7 +11,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let reservation of allReservations">
-        <td>{{ reservation.userId }}</td>
+        <td>{{reservation.id}}</td>
         <td>
           <strong>{{ reservation.serviceType?.name }}</strong><br>
           {{ reservation.serviceType?.description }}<br>

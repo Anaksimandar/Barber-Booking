@@ -1,8 +1,10 @@
-﻿namespace BarberBooking.Server.Models
+﻿using BarberBooking.Server.Entities;
+
+namespace BarberBooking.Server.Models
 {
     public class LoginResponse
     {
-        public LoginUser? LoginUser { get; set; }
-        public string? Token { get; set; }
+        public AuthenticatedUser? User { get; set; }
+        public string Token { get; set; }
     }
 }

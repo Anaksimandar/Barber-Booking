@@ -6,6 +6,10 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { EditReservationModalComponent } from '../modal/edit-reservation-modal/edit-reservation-modal.component';
 import { DateEmiterService } from '../../services/date-emiter.service';
 import { NewReservation } from '../../../models/new-reservation-model';
+import { AccountService } from '../../services/account.service';
+import { Observable, take } from 'rxjs';
+import { AuthenticatedUser } from '../../../models/authenticated-user.model';
+import { RoleType } from '../../../models/role-type.model';
 
 @Component({
   selector: 'app-list-reservations',
@@ -16,12 +20,28 @@ export class ListReservationsComponent implements OnInit {
   public allReservations: Reservation[];
   private editModalRef!: NgbModalRef;
   private currenReservation?: Reservation;
+  private currentUser!: AuthenticatedUser | null;
+  public isAdmin!: boolean;
 
-  constructor(private httpClient: HttpClient, private notification: ToastrService, private modalService: NgbModal, private dateEmitter:DateEmiterService) {
+  constructor(
+    private httpClient: HttpClient,
+    private notification: ToastrService,
+    private modalService: NgbModal,
+    private dateEmitter: DateEmiterService,
+    private accountService: AccountService
+  ){
     this.allReservations = [];
+    this.accountService.currentUser$.pipe(take(1)).subscribe(
+      result => {
+        this.currentUser = result;
+        this.isAdmin = this.currentUser?.role.roleType == RoleType.Admin;
+      }
+    );
+    
   }
   ngOnInit() {
     this.getAllReservations();
+    
   }
 
   openEditReservationModal(reservation: Reservation) {
@@ -55,7 +75,7 @@ export class ListReservationsComponent implements OnInit {
         this.getAllReservations();
       },
       error => {
-        this.notification.error(error.message);
+        this.notification.error(error.error.message);
       }
     )
   }

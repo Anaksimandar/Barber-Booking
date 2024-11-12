@@ -15,7 +15,7 @@ namespace BarberBooking.Server.Services
             _db = db;
         }
 
-        public async Task CreateReservation(NewReservation newReservation)
+        public async Task CreateReservation(int creatorId, NewReservation newReservation)
         {
             // we should check on backend is reservation date valid (is there any other reservation with same date)
             DateTime formatedDateOfReservation = newReservation.DateOfReservation.ToLocalTime();
@@ -26,7 +26,7 @@ namespace BarberBooking.Server.Services
             var reservation = new Reservation()
             {
                 ServiceTypeId = newReservation.ServiceTypeId,
-                UserId = newReservation.UserId,
+                UserId = creatorId,
                 DateOfReservation = formatedDateOfReservation,
             };
             await _db.Reservations.AddAsync(reservation);
@@ -59,15 +59,19 @@ namespace BarberBooking.Server.Services
         }
 
 
-        public async Task<List<Reservation>> GetReservations()
+        public async Task<List<Reservation>> GetReservations(int currentUserId, RoleType currentUserRole)
         {
-            var reservations = await _db.Reservations.Include(r => r.ServiceType)
-                .ToListAsync();
-
-            return reservations;
+            var reservationsQuery = _db.Reservations.Include(r => r.User.Role).Include(r => r.ServiceType).AsQueryable();
+            // if user is admind return all reservations
+            if(currentUserRole == RoleType.Admin)
+            {
+                return await reservationsQuery.ToListAsync();
+            }
+            // if its not admin return just reservations that auth user created
+            return await reservationsQuery.Where(r => r.User.Id == currentUserId).ToListAsync();
         }
 
-        public async Task UpdateReservation(int reservationId, NewReservation newReservation)
+        public async Task UpdateReservation(int creatorId,int reservationId, NewReservation newReservation)
         {
             DateTime formatedDateOfReservation = newReservation.DateOfReservation.ToLocalTime();
 
@@ -80,21 +84,17 @@ namespace BarberBooking.Server.Services
                 throw new ArgumentException("Time of reservation cannot be in past");
             }
 
-            bool reservationExists =  _db.Reservations.Where(r => r.Id == reservationId).Any();
+            Reservation? existingReservation = await _db.Reservations.Include(r => r.User).Include(r => r.ServiceType).FirstOrDefaultAsync(r => r.Id == reservationId && r.UserId == creatorId);
 
-            if (!reservationExists)
+            if (existingReservation == null)
             {
                 throw new ArgumentException("Reservation doesnt exists");
             }
-            Reservation reservation = new Reservation()
-            {
-                Id = reservationId,
-                UserId = newReservation.UserId,
-                DateOfReservation = formatedDateOfReservation,
-                ServiceTypeId = newReservation.ServiceTypeId
-            };
+
+            existingReservation.ServiceTypeId = newReservation.ServiceTypeId;
+            existingReservation.DateOfReservation = formatedDateOfReservation;
             // validation for date
-            _db.Reservations.Update(reservation);
+            _db.Reservations.Update(existingReservation);
             await _db.SaveChangesAsync();
 
         }

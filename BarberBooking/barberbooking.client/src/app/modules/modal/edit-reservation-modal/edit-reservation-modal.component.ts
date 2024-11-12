@@ -26,7 +26,7 @@ export class EditReservationModalComponent implements OnInit {
   }
 
   submit() {
-    var newReservation: NewReservation = {userId:1,serviceTypeId:this.newReservationService.id,dateOfReservation:this.newReservationDate}
+    var newReservation: NewReservation = {serviceTypeId:this.newReservationService.id,dateOfReservation:this.newReservationDate}
     this.OnSubmit.emit(newReservation);
   }
 

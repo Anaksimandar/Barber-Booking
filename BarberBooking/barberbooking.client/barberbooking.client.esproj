@@ -9,5 +9,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="src\app\modules\modal\" />
+    <Folder Include="src\app\modules\rest\" />
   </ItemGroup>
 </Project>

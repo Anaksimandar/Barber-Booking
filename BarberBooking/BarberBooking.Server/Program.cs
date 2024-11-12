@@ -1,6 +1,7 @@
 using BarberBooking.Server.Entities;
 using BarberBooking.Server.Helper.Authentication;
 using BarberBooking.Server.Services;
+using BarberBooking.Server.Services.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -11,29 +12,39 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+});
 builder.Services.AddScoped<ISeedingService, SeedingService>();
 builder.Services.AddScoped<IReservationsService, ReservationService>();
 builder.Services.AddScoped<IServiceTypeService, ServiceTypeService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
-
+builder.Services.AddTransient<CurrentUserAccessor>();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<BarberBookingContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-// add to appsettings.json
-var key = Encoding.ASCII.GetBytes("not_that_secure_key");
+//add to appsettings.json
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
+            ValidIssuer = "https://localhost:7030/",
+            ValidAudience = "https://localhost:4200/",
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(key),
-            ValidateIssuer = false,
-            ValidateAudience = false,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("MySuperLongAndSecureKeyWithMoreThen256bytes")),
+            ValidateIssuer = true,
+            ValidateAudience = true,
             ValidateLifetime = true,
         };
     });
@@ -101,6 +112,7 @@ app.UseHttpsRedirection();
 
 app.UseCors("AllowSpecificOrigins");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

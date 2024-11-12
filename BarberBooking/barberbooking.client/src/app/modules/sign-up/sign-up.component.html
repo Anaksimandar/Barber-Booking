@@ -2,16 +2,18 @@
   <app-navigation></app-navigation>
 
   <div class="form-container">
-    <form>
+    <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
       <h2>Create An Account</h2>
       <p>Create an account to enjoy all the services without any ads for free!</p>
+      <input formControlName="name" placeholder="Name">
+      <input formControlName="surname" placeholder="Surname">
+      <input formControlName="email" placeholder="Email Address">
+      <input formControlName="password" placeholder="Password">
+      <input formControlName="confirmPassword" placeholder="Confirm password">
 
-      <input type="email" name="email" placeholder="Email Address" required>
-      <input type="password" name="password" placeholder="Password" required>
+      <button [disabled]="!signUpForm.valid" type="submit">Sign up</button>
 
-      <button type="submit">Create Account</button>
-
-      <p>Already Have An Account? <a href="#">Sign In</a></p>
+      <p>Already have account ? <a [routerLink]="['/login']">Login</a></p>
     </form>
   </div>
 </div>

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BarberBooking.Server.Controllers
 {
-    [Authorize]
     [Route("api")]
     [ApiController]
     public class AccountController : ControllerBase
@@ -16,6 +15,7 @@ namespace BarberBooking.Server.Controllers
             _accountService = accountService;
         }
 
+        [Authorize]
         [HttpGet("all-users")]
         public async Task<ActionResult<List<User>>> GetUsers()
         {

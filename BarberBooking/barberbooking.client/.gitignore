@@ -45,7 +45,7 @@ testem.log
 .DS_Store
 Thumbs.db
 
-bin/
+BarberBooking.Server./bin/
 obj/
 *.user
 *.suo

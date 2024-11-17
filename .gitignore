@@ -73,3 +73,6 @@ Thumbs.db
 # Ignore coverage reports
 coverage/
 
+/BarberBooking/BarberBooking.Server/obj
+/BarberBooking/BarberBooking.Server/obj/BarberBooking.Server.csproj.nuget.dgspec.json
+/BarberBooking/BarberBooking.Server/obj/project.nuget.cache

@@ -8,14 +8,11 @@ import { Router } from '@angular/router';
   styleUrls: ['./navigation.component.css']
 })
 export class NavigationComponent {
-  isAuthenticated: boolean = false;
-  constructor(private accountService: AccountService, private router:Router) {
-    this.isAuthenticated = accountService.isAuthenticated();
-  }
+  constructor(public accountService: AccountService, private router:Router) {}
 
   logout() {
     this.accountService.logout();
-    this.router.navigateByUrl("/");
+    this.router.navigateByUrl("/login");
   }
 
 }

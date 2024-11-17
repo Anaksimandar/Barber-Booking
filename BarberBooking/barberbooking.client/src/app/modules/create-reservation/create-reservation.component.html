@@ -1,12 +1,15 @@
-<h5 class="my-2">Choose barber service:</h5>
-<select [(ngModel)]="selectedType" class="form-select w-25">
-  <option *ngFor="let st of serviceTypes" [ngValue]="st">{{st.name}}</option>
-</select>
-<div>
-  <h5 class="my-2">Choose booking time:</h5>
-  <p>{{selectedDate | date:'dd/MM/yyyy HH:mm'}}</p>
-</div>
-<app-booking-search></app-booking-search>
-<div>
-  <button [disabled]="!selectedType || !selectedDate" class="btn btn-success my-4" (click)="addReservation()">Add reservation</button>
+<div id="reservation-section">
+  <h5 class="my-2">Choose barber service:</h5>
+  <select [(ngModel)]="selectedType" class="form-select w-25">
+    <option *ngFor="let st of serviceTypes" [ngValue]="st">{{st.name}}</option>
+  </select>
+  <div>
+    <h5 class="my-2">Choose booking time:</h5>
+    <p>{{selectedDate | date:'dd/MM/yyyy HH:mm'}}</p>
+  </div>
+  <app-booking-search></app-booking-search>
+  <div>
+    <button [disabled]="!selectedType || !selectedDate" class="btn btn-success my-4" (click)="addReservation()">Add reservation</button>
+  </div>
+
 </div>

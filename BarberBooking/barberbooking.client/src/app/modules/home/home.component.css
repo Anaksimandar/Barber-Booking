@@ -1,4 +1,9 @@
+.container{
+    height:80vh;
+}
 #title {
   padding:16px;
   text-align:center;
+  color:white;
+  background-color:rgb(0,0,0,0.5)
 }

@@ -5,13 +5,13 @@
   <li class="nav-item">
     <a class="nav-link" [routerLink]="'/list-reservations'" routerLinkActive="active">Reservations</a>
   </li>
-  <li (click)="logout()" class="nav-item" *ngIf="isAuthenticated"> 
-    <a class="nav-link">Logout</a>
+  <li (click)="logout()" class="nav-item" *ngIf="accountService.isAuthenticated()"> 
+    <a class="nav-link" [routerLink]="['/']">Logout</a>
   </li>
-  <li *ngIf="!isAuthenticated" class="nav-item">
+  <li *ngIf="!accountService.isAuthenticated()" class="nav-item">
     <a class="nav-link" [routerLink]="'/login'" routerLinkActive="active">Login</a>
   </li>
-  <li *ngIf="!isAuthenticated" class="nav-item">
+  <li *ngIf="!accountService.isAuthenticated()" class="nav-item">
     <a class="nav-link" [routerLink]="'/sign-up'" routerLinkActive="active">Register</a>
   </li>
 </ul>

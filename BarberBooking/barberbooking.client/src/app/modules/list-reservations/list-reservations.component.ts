@@ -20,7 +20,7 @@ export class ListReservationsComponent implements OnInit {
   public allReservations: Reservation[];
   private editModalRef!: NgbModalRef;
   private currenReservation?: Reservation;
-  private currentUser!: AuthenticatedUser | null;
+  public currentUser!: AuthenticatedUser | null;
   public isAdmin!: boolean;
 
   constructor(

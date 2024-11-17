@@ -2,7 +2,7 @@ import { Role } from "./role.model";
 
 export interface AuthenticatedUser {
   name: string,
-  username: string,
+  surname: string,
   email: string,
   role: Role
 }

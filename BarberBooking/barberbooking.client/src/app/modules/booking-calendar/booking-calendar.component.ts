@@ -152,7 +152,6 @@ export class BookingCalendarComponent implements OnInit {
       this.closeAvaiableHoursModal();
     });
     this.availableHoursModalRef.componentInstance.OnSubmit.subscribe((currentHours: string) => {
-      alert(currentHours);
       //const [hours, mins] = currentHours.split(":");
       const [hours, mins] = currentHours.split(":");
       this.choosenBookingDate.setHours(parseInt(hours));

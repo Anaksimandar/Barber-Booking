@@ -56,6 +56,10 @@ namespace BarberBooking.Server.Controllers
                 {
                     return Unauthorized(new { message = ex.Message });
                 }
+                if(ex is ArgumentException)
+                {
+                    return BadRequest(ex.Message);
+                }
 
                 // Handle other exceptions
                 return StatusCode(500, "An error occurred while retrieving reservations.");

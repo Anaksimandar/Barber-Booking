@@ -10,7 +10,7 @@ export class DateEmiterService {
   existingDate$ = this.existingDate.asObservable();
   newDate$ = this.newDate.asObservable();
 
-  setExistingDate(date: Date) {
+  setExistingDate(date: Date | null) {
     this.existingDate.next(date);
   }
 

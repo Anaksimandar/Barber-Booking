@@ -13,7 +13,7 @@ import { DateEmiterService } from '../../services/date-emiter.service';
 })
 export class CreateReservationComponent implements OnInit{
   
-  public selectedType!: ServiceType;
+  public selectedType!: ServiceType | null;
   serviceTypes: ServiceType[] = [];
   public selectedDate!: Date | null;
 
@@ -21,13 +21,17 @@ export class CreateReservationComponent implements OnInit{
 
   }
 
+  restartForm() {
+  }
+
   addReservation(): void {
-    var serviceTypeId: number = this.selectedType.id;
+    var serviceTypeId: number | null = this.selectedType!.id;
     var newReservation: NewReservation = { serviceTypeId: serviceTypeId, dateOfReservation: this.selectedDate};
     this.httpClient.post("https://localhost:7030/api/reservation", newReservation).subscribe(
       (result: any) => {
         this.notification.success("Reservation has been created succesfuly");
         this.selectedDate = null;
+        this.selectedType = null;
       },
       error => {
         console.log(error);

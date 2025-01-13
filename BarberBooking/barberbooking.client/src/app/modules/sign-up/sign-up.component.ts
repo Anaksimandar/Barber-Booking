@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { NewUser } from '../../../models/new-user.model';
 import { HttpClient } from '@angular/common/http';
+import { passwordMatchValidator } from '../../validators/password-match-validator';
 
 @Component({
   selector: 'app-sign-up',
@@ -25,7 +26,14 @@ export class SignUpComponent {
       email: new FormControl("", [Validators.required, Validators.email]),
       password: new FormControl("", [Validators.required, Validators.minLength(6)]),
       confirmPassword: new FormControl("", [Validators.required, Validators.minLength(6)]),
-    })
+    },
+    { validators: passwordMatchValidator }
+    )
+  }
+
+  private getValueFromFormByElementName(elementName:string):string {
+    return this.signUpForm.get("elementName")?.value;
+
   }
 
   addUser(newUser: NewUser) {

@@ -37,7 +37,7 @@ export class LogInComponent implements OnInit {
     this.http.post<LoginResponse>("https://localhost:7030/api/login", user).subscribe(
       result => {
         console.log(result);
-        this.notification.success("You logged in successfully" + result);
+        this.notification.success("You logged in successfully " + result.user.name);
         this.accountService.loginUser(result);
         this.router.navigateByUrl("/");
       },

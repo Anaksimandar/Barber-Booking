@@ -5,7 +5,7 @@ import { LoginUser } from '../../../models/login.model';
 import { HttpClient } from '@angular/common/http';
 import { AccountService } from '../../services/account.service';
 import { LoginResponse } from '../../../models/login-response.model';
-import { Route, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-log-in',
@@ -34,7 +34,7 @@ export class LogInComponent implements OnInit {
   }
 
   login(user: LoginUser) {
-    this.http.post<LoginResponse>("https://localhost:7030/api/login", user).subscribe(
+    this.http.post<LoginResponse>("http://localhost:5137/api/login", user).subscribe(
       result => {
         console.log(result);
         this.notification.success("You logged in successfully " + result.user.name);

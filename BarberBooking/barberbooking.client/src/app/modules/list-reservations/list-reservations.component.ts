@@ -69,7 +69,7 @@ export class ListReservationsComponent implements OnInit {
   }
 
   editReservation(newReservation: NewReservation) {
-    this.httpClient.put(`https://localhost:7030/api/reservation/${this.currenReservation?.id}`, newReservation).subscribe(
+    this.httpClient.put(`http://localhost:5137/api/reservation/${this.currenReservation?.id}`, newReservation).subscribe(
       result => {
         this.notification.success("Reservation has been updated successfully");
         this.dateEmitter.setExistingDate(null);

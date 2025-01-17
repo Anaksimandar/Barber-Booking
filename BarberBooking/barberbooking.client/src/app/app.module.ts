@@ -24,6 +24,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { LogInComponent } from './modules/log-in/log-in.component';
 import { AccountService } from './services/account.service';
 import { AuthInterceptor } from './modules/rest/auth-interceptor';
+import { ChangePasswordComponent } from './modules/change-password/change-password.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { AuthInterceptor } from './modules/rest/auth-interceptor';
     SignUpComponent,
     NotificationComponent,
     EditReservationModalComponent,
-    LogInComponent
+    LogInComponent,
+    ChangePasswordComponent
   ],
   imports: [
     BrowserModule,

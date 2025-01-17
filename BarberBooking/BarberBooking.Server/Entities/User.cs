@@ -15,6 +15,7 @@ namespace BarberBooking.Server.Entities
         public required string Surname { get; set; }
         public required string Email { get; set; }
         public required string Password { get; set; }
+        public string? PasswordToken { get; set; }
         public ICollection<Reservation>? Reservations { get; set; }
 
     }

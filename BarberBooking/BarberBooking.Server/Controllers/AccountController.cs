@@ -1,4 +1,5 @@
 ﻿using BarberBooking.Server.Entities;
+using BarberBooking.Server.Helper.Exceptions;
 using BarberBooking.Server.Models;
 using BarberBooking.Server.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -23,17 +24,68 @@ namespace BarberBooking.Server.Controllers
             return Ok(users);
         }
         [HttpPost("login")]
-        public async Task<LoginResponse> Login(LoginUser user)
+        public async Task<ActionResult<LoginResponse>> Login(LoginUser user)
         {
-            LoginResponse loginResponse = await _accountService.Login(user);
-            return loginResponse;
+            LoginResponse loginResponse;
+            try
+            {
+                loginResponse = await _accountService.Login(user);
+            }
+            catch (UnauthorizedAccessException ex) { 
+                return Unauthorized(ex);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return Ok(loginResponse);
         }
 
         [HttpPost("sign-in")]
         public async Task<IActionResult> Register(UserRegistration user)
         {
-            await _accountService.Register(user);
+            try
+            {
+                await _accountService.Register(user);
+            }
+            catch(ArgumentException ex)
+            {
+                return BadRequest();
+            }
 
+            return Ok();
+        }
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
+        {
+            try
+            {
+                await _accountService.ResetPassword(resetPasswordDto);
+            }
+            catch(ArgumentException ex) // passwords are not same
+            { 
+                return NotFound(ex.Message);
+            }
+            catch(EmailTokenException ex)
+            {
+                return BadRequest(ex.Message); // password token or user id doesnt belong to no user
+            }
+
+            return Ok();
+        }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] string mail)
+        {
+            try
+            {
+                await _accountService.ForgotPassword(mail);
+            }
+            catch(EmailServiceException ex)
+            {
+                return NotFound(ex.Message);
+            }
             return Ok();
         }
     }

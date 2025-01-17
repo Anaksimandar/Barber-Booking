@@ -8,5 +8,8 @@ namespace BarberBooking.Server.Services
         Task Register(UserRegistration user);
         Task<LoginResponse> Login(LoginUser user);
         Task<List<User>> GetUsers();
+        Task ForgotPassword(string mail);
+        Task ResetPassword(ResetPasswordDto resetPasswordDto);
+        Task ChangePassword(ChangePasswordResponse changePasswordResponse);
     }
 }

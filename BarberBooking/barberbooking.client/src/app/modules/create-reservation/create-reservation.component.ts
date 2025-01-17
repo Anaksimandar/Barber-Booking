@@ -27,7 +27,7 @@ export class CreateReservationComponent implements OnInit{
   addReservation(): void {
     var serviceTypeId: number | null = this.selectedType!.id;
     var newReservation: NewReservation = { serviceTypeId: serviceTypeId, dateOfReservation: this.selectedDate};
-    this.httpClient.post("https://localhost:7030/api/reservation", newReservation).subscribe(
+    this.httpClient.post("http://localhost:7030/api/reservation", newReservation).subscribe(
       (result: any) => {
         this.notification.success("Reservation has been created succesfuly");
         this.selectedDate = null;
@@ -45,7 +45,7 @@ export class CreateReservationComponent implements OnInit{
     this.dateEmiterService.existingDate$.subscribe((date:Date | null) => {
       this.selectedDate = date;
     })
-    this.httpClient.get<ServiceType[]>("https://localhost:7030/api/service-type").subscribe(
+    this.httpClient.get<ServiceType[]>("http://localhost:5137/api/service-type").subscribe(
       (result) => {
         this.serviceTypes = result;
       },

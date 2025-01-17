@@ -37,7 +37,7 @@ export class SignUpComponent {
   }
 
   addUser(newUser: NewUser) {
-    this.http.post("https://localhost:7030/api/sign-in", newUser).subscribe(
+    this.http.post("http://localhost:5137/api/sign-in", newUser).subscribe(
       result => {
         this.notification.success("You sign up successfully" + result);
       },

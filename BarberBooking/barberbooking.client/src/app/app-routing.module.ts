@@ -5,13 +5,17 @@ import { ListReservationsComponent } from './modules/list-reservations/list-rese
 import { SignUpComponent } from './modules/sign-up/sign-up.component';
 import { LogInComponent } from './modules/log-in/log-in.component';
 import { AuthGuard } from './guards/auth.guard';
+import { ForgotPasswordComponent } from './modules/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './modules/reset-password/reset-password.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent, canActivate:[AuthGuard] },
   { path: 'list-reservations', component: ListReservationsComponent,canActivate:[AuthGuard] },
   { path: 'sign-up', component: SignUpComponent },
-  { path: 'login', component: LogInComponent}
+  { path: 'login', component: LogInComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password', component: ResetPasswordComponent }
 
 ]
 

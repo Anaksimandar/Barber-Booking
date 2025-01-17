@@ -1,5 +1,6 @@
 using BarberBooking.Server.Entities;
 using BarberBooking.Server.Helper.Authentication;
+using BarberBooking.Server.Helper.Email;
 using BarberBooking.Server.Services;
 using BarberBooking.Server.Services.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -20,7 +21,9 @@ builder.Services.AddScoped<ISeedingService, SeedingService>();
 builder.Services.AddScoped<IReservationsService, ReservationService>();
 builder.Services.AddScoped<IServiceTypeService, ServiceTypeService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddTransient<CurrentUserAccessor>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<BarberBookingContext>(options =>

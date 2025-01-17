@@ -50,8 +50,8 @@ namespace BarberBooking.Server.Controllers
                 //return CreatedAtAction(nameof(CreateReservation), new { id = newReservation.Id });
 
                 return Ok();
-            }catch(Exception ex)
-            {
+            }
+            catch(Exception ex){
                 if (ex.Message == "User is not authenticated" || ex.Message == "Missing email claim")
                 {
                     return Unauthorized(new { message = ex.Message });

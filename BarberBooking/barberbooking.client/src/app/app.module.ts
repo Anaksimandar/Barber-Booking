@@ -25,6 +25,13 @@ import { LogInComponent } from './modules/log-in/log-in.component';
 import { AccountService } from './services/account.service';
 import { AuthInterceptor } from './modules/rest/auth-interceptor';
 import { ChangePasswordComponent } from './modules/change-password/change-password.component';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { ResetPasswordComponent } from './modules/reset-password/reset-password.component';
+import { ForgotPasswordComponent } from './modules/forgot-password/forgot-password.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -41,7 +48,9 @@ import { ChangePasswordComponent } from './modules/change-password/change-passwo
     NotificationComponent,
     EditReservationModalComponent,
     LogInComponent,
-    ChangePasswordComponent
+    ChangePasswordComponent,
+    ResetPasswordComponent,
+    ForgotPasswordComponent
   ],
   imports: [
     BrowserModule,
@@ -52,6 +61,11 @@ import { ChangePasswordComponent } from './modules/change-password/change-passwo
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule, // Required for animations
+    MatInputModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatIconModule,
     ToastrModule.forRoot({
       timeOut: 3000,
       positionClass: 'toast-top-right',

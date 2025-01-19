@@ -4,3 +4,19 @@
     flex-direction:column;
     padding:24px;
 }
+
+#select-service{
+    max-width: 240px;
+    margin-bottom:0;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
+}
+
+#content-btn{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+

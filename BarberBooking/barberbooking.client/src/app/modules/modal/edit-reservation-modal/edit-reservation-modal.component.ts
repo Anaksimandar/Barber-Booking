@@ -37,7 +37,7 @@ export class EditReservationModalComponent implements OnInit {
     this.dateEmitterService.newDate$.subscribe((date: Date | null) => {
       this.newReservationDate = date;
     })
-    this.httpClient.get<ServiceType[]>("https://localhost:7030/api/service-type").subscribe(
+    this.httpClient.get<ServiceType[]>("http://localhost:5137/api/service-type").subscribe(
       (result) => {
         this.serviceTypes = result;
       },

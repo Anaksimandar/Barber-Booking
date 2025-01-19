@@ -41,7 +41,7 @@ export class BookingCalendarComponent implements OnInit {
   }
 
   loadBookings(): void {
-    this.http.get<Reservation[]>("https://localhost:7030/api/reservation").subscribe(
+    this.http.get<Reservation[]>("http://localhost:5137/api/reservation").subscribe(
       result => {
         this.calendarOptions.events = result.map(booking => ({
           title: booking.userId?.toString(),

@@ -83,7 +83,7 @@ export class ListReservationsComponent implements OnInit {
 
 
   deleteReservation(reservationId: number) {
-    this.httpClient.delete(`https://localhost:7030/api/reservation/${reservationId}`).subscribe(
+    this.httpClient.delete(`http://localhost:5137/api/reservation/${reservationId}`).subscribe(
       result => {
         this.notification.success("Reservation has been successfully deleted");
         this.getAllReservations();
@@ -95,7 +95,7 @@ export class ListReservationsComponent implements OnInit {
   }
 
   getAllReservations() {
-    this.httpClient.get<Reservation[]>("https://localhost:7030/api/reservation").subscribe(
+    this.httpClient.get<Reservation[]>("http://localhost:5137/api/reservation").subscribe(
       result => {
         this.allReservations = result;
         console.log(result);

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ServiceType } from '../../../models/service-type.model';
 import { HttpClient } from '@angular/common/http';
-import { Reservation } from '../../../models/reservation.model';
 import { ToastrService } from 'ngx-toastr';
 import { NewReservation } from '../../../models/new-reservation-model';
 import { DateEmiterService } from '../../services/date-emiter.service';
@@ -27,7 +26,7 @@ export class CreateReservationComponent implements OnInit{
   addReservation(): void {
     var serviceTypeId: number | null = this.selectedType!.id;
     var newReservation: NewReservation = { serviceTypeId: serviceTypeId, dateOfReservation: this.selectedDate};
-    this.httpClient.post("http://localhost:7030/api/reservation", newReservation).subscribe(
+    this.httpClient.post("http://localhost:5137/api/reservation", newReservation).subscribe(
       (result: any) => {
         this.notification.success("Reservation has been created succesfuly");
         this.selectedDate = null;

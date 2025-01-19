@@ -56,6 +56,21 @@ namespace BarberBooking.Server.Controllers
 
             return Ok();
         }
+
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordResponse changePasswordResponse)
+        {
+            try
+            {
+                await this._accountService.ChangePassword(changePasswordResponse);
+            }
+            catch (Exception ex) { 
+                return BadRequest(ex.Message);
+            }
+
+            return Ok();
+        }
+
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
         {

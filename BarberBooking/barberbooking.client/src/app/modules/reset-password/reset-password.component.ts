@@ -1,8 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { RestartPasswordModel } from '../../../models/restart-password.model';
@@ -10,10 +7,8 @@ import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-reset-password',
-  standalone: true,
   templateUrl: './reset-password.component.html',
-  styleUrls: ['./reset-password.component.css'],
-  imports: [MatInputModule, MatButtonModule, ReactiveFormsModule]
+  styleUrls: ['./reset-password.component.css']
 })
 export class ResetPasswordComponent implements OnInit {
   formGroup!: FormGroup;

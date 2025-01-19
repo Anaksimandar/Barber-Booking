@@ -99,12 +99,19 @@ namespace BarberBooking.Server.Services
 
         public async Task ChangePassword(ChangePasswordResponse changePasswordResponse)
         {
-            if(changePasswordResponse.NewPassword != changePasswordResponse.ConfirmNewPassword)
-            {
-                throw new ArgumentException("Both passwords should be same");
+            // check does old password exits
+            User? user = await this._db.Users.FirstOrDefaultAsync(u => u.Email == changePasswordResponse.Mail);
+            if (user == null) {
+                throw new ArgumentException("User doesnt exists");
             }
 
-            
+            if(user.Password != changePasswordResponse.OldPassword)
+            {
+                throw new ArgumentException("Please enter correct old password");
+            }
+
+            user.Password = changePasswordResponse.NewPassword;
+            await _db.SaveChangesAsync();
         }
 
         public async Task ResetPassword(ResetPasswordDto resetPasswordDto)

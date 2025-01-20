@@ -12,11 +12,11 @@
     <li *ngIf="!accountService.isAuthenticated()" class="nav-item">
       <a class="nav-link" [routerLink]="'/login'" routerLinkActive="active">Login</a>
     </li>
-    <li *ngIf="!accountService.isAuthenticated()" class="nav-item">
-      <a class="nav-link" [routerLink]="'/sign-up'" routerLinkActive="active">Register</a>
-    </li>
     <li class="nav-item">
       <a class="nav-link" [routerLink]="'/change-password'" routerLinkActive="active">Change password</a>
+    </li>
+    <li *ngIf="!accountService.isAuthenticated()" class="nav-item">
+      <a class="nav-link" [routerLink]="'/sign-up'" routerLinkActive="active">Register</a>
     </li>
   </ul>
 </div>

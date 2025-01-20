@@ -9,6 +9,8 @@ import { AvailableHoursModalComponent } from '../modal/available-hours-modal/ava
 import { SubmitModalComponent } from 'src/app/modules/modal/submit-modal/submit-modal.component';
 import { ToastrService } from 'ngx-toastr';
 import { DateEmiterService } from '../../services/date-emiter.service';
+import { RestService } from '../rest/rest-service';
+import { NotificationService } from '../../services/notification.service';
 interface StartEndDate {
   startDate: Date,
   endDate: Date
@@ -30,7 +32,11 @@ export class BookingCalendarComponent implements OnInit {
   private modalService = inject(NgbModal);
   private submitModalRef!: NgbModalRef;
   private choosenBookingDate!: Date;
-  constructor(private http:HttpClient, private notification:ToastrService, private dateEmitter:DateEmiterService) {
+  constructor(
+    private http: HttpClient,
+    private notification: NotificationService,
+    private dateEmitter: DateEmiterService,
+    private restService:RestService) {
 
   }
   calendarOptions: CalendarOptions = {
@@ -41,21 +47,20 @@ export class BookingCalendarComponent implements OnInit {
   }
 
   loadBookings(): void {
-    this.http.get<Reservation[]>("http://localhost:5137/api/reservation").subscribe(
-      result => {
+    this.restService.get("reservation").subscribe({
+      next: (result) => {
         this.calendarOptions.events = result.map(booking => ({
           title: booking.userId?.toString(),
           start: new Date(booking.dateOfReservation!),
           allDay: false
-        })),
-        this.reservations = result;
+        }))
       },
-      error => {
-        console.log(error);
-        this.notification.error(error.message);
+      error: (error) => {
+        this.notification.showError(error);
       }
-    )
-  }
+    })
+}
+  
 
   //openAvailableHoursModal(date: Date, bookedHours: Date[]): void {
   //  const availableHours = this.computeAvailableHours(bookedHours);

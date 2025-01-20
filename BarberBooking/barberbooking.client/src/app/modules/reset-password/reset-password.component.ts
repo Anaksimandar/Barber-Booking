@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { RestartPasswordModel } from '../../../models/restart-password.model';
 import { NotificationService } from '../../services/notification.service';
+import { RestService } from '../rest/rest-service';
 
 @Component({
   selector: 'app-reset-password',
@@ -15,7 +16,11 @@ export class ResetPasswordComponent implements OnInit {
   private userId!:number;
   private passwordToken!:string | null;
 
-  constructor(private route:ActivatedRoute, private http:HttpClient, private notification:NotificationService) {
+  constructor(
+    private route: ActivatedRoute,
+    private http: HttpClient,
+    private restService:RestService,
+    private notification: NotificationService) {
     this.route.queryParamMap.subscribe(params => {
       const userIdParam = params.get("userId");
       const passwordTokenParam = params.get("token");
@@ -29,25 +34,21 @@ export class ResetPasswordComponent implements OnInit {
   }
 
   changePassword() {
-    const httpOptions: object = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      })
-    }
     const restartPasswordModel: RestartPasswordModel = {
       userId: this.userId,
       passwordToken: this.passwordToken,
       newPassword: this.formGroup.get("newPassword")?.value,
       confirmNewPassword: this.formGroup.get("confirmNewPassword")?.value
     };
-    this.http.post("http://localhost:5137/api/reset-password", JSON.stringify(restartPasswordModel), httpOptions).subscribe(
-      result => {
+
+    this.restService.post("reset-password", restartPasswordModel).subscribe({
+      next: (result) => {
         this.notification.showSuccess("Password has been changed succesfully");
       },
-      error => {
+      error: (error) => {
         this.notification.showError(error.error);
       }
-    )
+    })
     this.formGroup.reset();
   }
 

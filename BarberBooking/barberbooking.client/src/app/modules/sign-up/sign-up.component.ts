@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
 import { NewUser } from '../../../models/new-user.model';
 import { HttpClient } from '@angular/common/http';
 import { passwordMatchValidator } from '../../validators/password-match-validator';
+import { NotificationService } from '../../services/notification.service';
+import { RestService } from '../rest/rest-service';
 
 @Component({
   selector: 'app-sign-up',
@@ -13,7 +14,10 @@ import { passwordMatchValidator } from '../../validators/password-match-validato
 export class SignUpComponent {
   signUpForm!: FormGroup;
 
-  constructor(private notification: ToastrService, private http:HttpClient) { }
+  constructor(
+    private notificationService: NotificationService,
+    private http: HttpClient,
+    private restService: RestService) { }
 
   ngOnInit() {
     this.initializeForm();
@@ -37,14 +41,14 @@ export class SignUpComponent {
   }
 
   addUser(newUser: NewUser) {
-    this.http.post("http://localhost:5137/api/sign-in", newUser).subscribe(
-      result => {
-        this.notification.success("You sign up successfully" + result);
+    this.restService.post("sign-in", newUser).subscribe({
+      next: (result) => {
+        this.notificationService.showSuccess("You sign up successfully" + result);
       },
-      error => {
-        this.notification.error(error);
+      error: (error) => {
+        this.notificationService.showError(error);
       }
-    )
+    })
   }
 
   onSubmit() {
@@ -54,5 +58,5 @@ export class SignUpComponent {
     }
 
   }
-
+   
 }

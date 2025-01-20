@@ -68,7 +68,7 @@ namespace BarberBooking.Server.Controllers
                 return BadRequest(ex.Message);
             }
 
-            return Ok();
+            return Ok("Password has been changes successfully");
         }
 
         [HttpPost("reset-password")]

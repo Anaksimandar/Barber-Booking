@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { NewReservation } from '../../../models/new-reservation-model';
 import { DateEmiterService } from '../../services/date-emiter.service';
+import { RestService } from '../rest/rest-service';
 
 @Component({
   selector: 'app-create-reservation',
@@ -16,7 +17,11 @@ export class CreateReservationComponent implements OnInit{
   serviceTypes: ServiceType[] = [];
   public selectedDate!: Date | null;
 
-  constructor(private httpClient: HttpClient, private notification:ToastrService, private dateEmiterService:DateEmiterService) {
+  constructor(
+    private httpClient: HttpClient,
+    private notification: ToastrService,
+    private restService:RestService,
+    private dateEmiterService: DateEmiterService) {
 
   }
 
@@ -25,18 +30,20 @@ export class CreateReservationComponent implements OnInit{
 
   addReservation(): void {
     var serviceTypeId: number | null = this.selectedType!.id;
-    var newReservation: NewReservation = { serviceTypeId: serviceTypeId, dateOfReservation: this.selectedDate};
-    this.httpClient.post("http://localhost:5137/api/reservation", newReservation).subscribe(
-      (result: any) => {
+    var newReservation: NewReservation = { serviceTypeId: serviceTypeId, dateOfReservation: this.selectedDate };
+
+    this.restService.post("reservation", newReservation).subscribe({
+      next: (result) => {
         this.notification.success("Reservation has been created succesfuly");
         this.selectedDate = null;
         this.selectedType = null;
       },
-      error => {
+      error: (error) => {
         console.log(error);
         this.notification.error(error.error)
       }
-    )
+    })
+    //this.formGroup.reset();
   }
 
 
@@ -44,14 +51,15 @@ export class CreateReservationComponent implements OnInit{
     this.dateEmiterService.existingDate$.subscribe((date:Date | null) => {
       this.selectedDate = date;
     })
-    this.httpClient.get<ServiceType[]>("http://localhost:5137/api/service-type").subscribe(
-      (result) => {
+
+    this.restService.get("service-type").subscribe({
+      next: (result) => {
         this.serviceTypes = result;
       },
-      (error) => {
+      error: (error) => {
         this.notification.error(error.message)
       }
-    )
+    })
   }
 
 

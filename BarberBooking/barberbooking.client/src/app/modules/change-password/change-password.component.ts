@@ -5,6 +5,7 @@ import { NotificationService } from '../../services/notification.service';
 import { ChangePasswordModel } from '../../../models/change-password.model';
 import { AuthenticatedUser } from '../../../models/authenticated-user.model';
 import { AccountService } from '../../services/account.service';
+import { RestService } from '../rest/rest-service';
 
 @Component({
   selector: 'app-change-password',
@@ -14,7 +15,11 @@ import { AccountService } from '../../services/account.service';
 export class ChangePasswordComponent {
   formGroup!: FormGroup;
   private currentUser: AuthenticatedUser | null;
-  constructor (private http: HttpClient, private notification: NotificationService, private accountService:AccountService) {
+  constructor(
+    private http: HttpClient,
+    private notification: NotificationService,
+    private accountService: AccountService,
+    private restService:RestService) {
     this.currentUser = null;
   }
 
@@ -24,24 +29,19 @@ export class ChangePasswordComponent {
   }
 
   changePassword() {
-    const httpOptions: object = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      })
-    }
     const changePasswordModel: ChangePasswordModel = {
       mail: this.currentUser?.email,
       oldPassword: this.formGroup.get("oldPassword")?.value,
       newPassword: this.formGroup.get("newPassword")?.value
     };
-    this.http.post("http://localhost:5137/api/change-password", JSON.stringify(changePasswordModel), httpOptions).subscribe(
-      result => {
-        this.notification.showSuccess("Password has been changed succesfully");
+    this.restService.post("change-password",changePasswordModel).subscribe({
+      next: (result) => {
+        this.notification.showSuccess(result.toString());
       },
-      error => {
-        this.notification.showError(error.error);
+      error: (error) => {
+        this.notification.showError(error);
       }
-    )
+    })
     this.formGroup.reset();
   }
 

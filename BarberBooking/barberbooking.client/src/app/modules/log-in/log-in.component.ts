@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { AccountService } from '../../services/account.service';
 import { LoginResponse } from '../../../models/login-response.model';
 import { Router } from '@angular/router';
+import { RestService } from '../rest/rest-service';
 
 @Component({
   selector: 'app-log-in',
@@ -17,6 +18,7 @@ export class LogInComponent implements OnInit {
 
   constructor(
     private notification: ToastrService,
+    private restService:RestService,
     private http: HttpClient,
     private accountService: AccountService,
     private router: Router
@@ -34,17 +36,16 @@ export class LogInComponent implements OnInit {
   }
 
   login(user: LoginUser) {
-    this.http.post<LoginResponse>("http://localhost:5137/api/login", user).subscribe(
-      result => {
-        console.log(result);
+    this.restService.post("login", user).subscribe({
+      next: (result) => {
         this.notification.success("You logged in successfully " + result.user.name);
         this.accountService.loginUser(result);
         this.router.navigateByUrl("/");
       },
-      error => {
+      error: (error) => {
         this.notification.error(error);
       }
-    )
+    })
     this.loginForm.reset();
   }
 

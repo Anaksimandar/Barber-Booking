@@ -1,15 +1,15 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Reservation } from '../../../models/reservation.model';
-import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { EditReservationModalComponent } from '../modal/edit-reservation-modal/edit-reservation-modal.component';
 import { DateEmiterService } from '../../services/date-emiter.service';
 import { NewReservation } from '../../../models/new-reservation-model';
 import { AccountService } from '../../services/account.service';
-import { Observable, take } from 'rxjs';
+import { take } from 'rxjs';
 import { AuthenticatedUser } from '../../../models/authenticated-user.model';
 import { RoleType } from '../../../models/role-type.model';
+import { RestService } from '../rest/rest-service';
 
 @Component({
   selector: 'app-list-reservations',
@@ -19,15 +19,15 @@ import { RoleType } from '../../../models/role-type.model';
 export class ListReservationsComponent implements OnInit {
   public allReservations: Reservation[];
   private editModalRef!: NgbModalRef;
-  private currenReservation?: Reservation;
+  private currenReservation!: Reservation;
   public currentUser!: AuthenticatedUser | null;
   public isAdmin!: boolean;
 
   constructor(
-    private httpClient: HttpClient,
     private notification: ToastrService,
     private modalService: NgbModal,
     private dateEmitter: DateEmiterService,
+    private restService:RestService,
     private accountService: AccountService
   ){
     this.allReservations = [];
@@ -69,41 +69,40 @@ export class ListReservationsComponent implements OnInit {
   }
 
   editReservation(newReservation: NewReservation) {
-    this.httpClient.put(`http://localhost:5137/api/reservation/${this.currenReservation?.id}`, newReservation).subscribe(
-      result => {
+    this.restService.update("reservation", this.currenReservation?.id, newReservation).subscribe({
+      next: (result) => {
         this.notification.success("Reservation has been updated successfully");
         this.dateEmitter.setExistingDate(null);
-        this.getAllReservations();
-      },
-      error => {
+        this.getAllReservations();      },
+      error: (error) => {
         this.notification.error(error.error.message);
       }
-    )
+    })
   }
 
 
   deleteReservation(reservationId: number) {
-    this.httpClient.delete(`http://localhost:5137/api/reservation/${reservationId}`).subscribe(
-      result => {
+    this.restService.delete("reservation", this.currenReservation?.id).subscribe({
+      next: (result) => {
         this.notification.success("Reservation has been successfully deleted");
         this.getAllReservations();
       },
-      error => {
+      error: (error) => {
         this.notification.error("Error with deleting reservation");
       }
-    )
+    })
   }
 
   getAllReservations() {
-    this.httpClient.get<Reservation[]>("http://localhost:5137/api/reservation").subscribe(
-      result => {
+    this.restService.get("reservation").subscribe({
+      next: (result) => {
         this.allReservations = result;
         console.log(result);
       },
-      error => {
+      error: (error) => {
         this.notification.error(error.message);
       }
-    )
+    })
   }
 
   //editReservation(reservaton:Reservation) {

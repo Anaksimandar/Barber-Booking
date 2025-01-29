@@ -76,3 +76,4 @@ coverage/
 /BarberBooking/BarberBooking.Server/obj
 /BarberBooking/BarberBooking.Server/obj/BarberBooking.Server.csproj.nuget.dgspec.json
 /BarberBooking/BarberBooking.Server/obj/project.nuget.cache
+/BarberBooking/BarberBooking.Server/Files

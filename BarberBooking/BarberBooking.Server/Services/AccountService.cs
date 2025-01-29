@@ -143,13 +143,16 @@ namespace BarberBooking.Server.Services
 
         public string OAuthRedirect()
         {
-            string googleAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
-                    "scope=https://www.googleapis.com/auth/calendar&" +
-                    "access_type=offline&" +
-                    "response_type=code&" +
-                    "client_id=426884900522-pqhn7ati50jkk6tfb4ouja8vkg6tld66.apps.googleusercontent.com&" +
-                    "redirect_uri=http://localhost:5137/api/auth/google&" +
-                    "state=YOUR_RANDOM_STATE_VALUE";
+            string credentialsFile = "C:\\Users\\acode\\Source\\Repos\\Barber-Booking\\BarberBooking\\BarberBooking.Server\\Files\\credentials.json";
+            GoogleCredentialsModel? credentialsObject = JsonSerializer.Deserialize<GoogleCredentialsModel>(File.ReadAllText(credentialsFile));
+
+            string googleAuthUrl = $@"https://accounts.google.com/o/oauth2/v2/auth?
+                    scope=https://www.googleapis.com/auth/calendar&
+                    access_type=offline&
+                    response_type=code&
+                    client_id={credentialsObject!.ClientId}&
+                    redirect_uri=http://localhost:5137/api/auth/google&
+                    state=YOUR_RANDOM_STATE_VALUE";
 
             return googleAuthUrl;
         }
@@ -157,11 +160,14 @@ namespace BarberBooking.Server.Services
 
         public async Task AccessToken(string code)
         {
-            string tokenFile = "C:\\Users\\acode\\Source\\Repos\\Barber-Booking\\BarberBooking\\BarberBooking.Server\\Files\\tokens.json";
+            string tokensFile = "C:\\Users\\acode\\Source\\Repos\\Barber-Booking\\BarberBooking\\BarberBooking.Server\\Files\\tokens.json";
+            string credentialsFile = "C:\\Users\\acode\\Source\\Repos\\Barber-Booking\\BarberBooking\\BarberBooking.Server\\Files\\credentials.json";
+            GoogleCredentialsModel? credentialsObject = JsonSerializer.Deserialize<GoogleCredentialsModel>(File.ReadAllText(credentialsFile));
+
             var tokenRequest = new Dictionary<string, string>{
                 { "code", code },
-                { "client_id", "426884900522-pqhn7ati50jkk6tfb4ouja8vkg6tld66.apps.googleusercontent.com" },
-                { "client_secret", "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" },
+                { "client_id", credentialsObject!.ClientId},
+                { "client_secret", credentialsObject.ClientSecret },
                 { "redirect_uri", "http://localhost:5137/api/auth/google" },
                 { "grant_type", "authorization_code" }
             };
@@ -175,7 +181,7 @@ namespace BarberBooking.Server.Services
                 throw new Exception("Error retrieving access token");
             }
 
-            File.WriteAllText(tokenFile, await response.Content.ReadAsStringAsync());
+            File.WriteAllText(tokensFile, await response.Content.ReadAsStringAsync());
         }
 
         public async Task RefreshToken()

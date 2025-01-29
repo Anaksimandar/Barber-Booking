@@ -1,22 +1,22 @@
-<div id="reservation-section">
-  <mat-form-field id="select-service" >
-    <mat-label>Choose service</mat-label>
-    <mat-select [(ngModel)]="selectedType">
-      <mat-option *ngFor="let st of serviceTypes" [value]="st">{{ st.name }}</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <div>
-    <h5 class="md-2">Choose booking time:</h5>
-    <p>{{selectedDate | date:'dd/MM/yyyy HH:mm'}}</p>
+  <div id="reservation-section">
+    <mat-form-field id="select-service">
+      <mat-label>Choose service</mat-label>
+      <mat-select [(ngModel)]="selectedType">
+        <mat-option *ngFor="let st of serviceTypes" [value]="st">{{ st.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div>
+      <p id="selected-booking-time" *ngIf="selectedDate">Selected booking time:</p>
+      <p>{{selectedDate | date:'dd/MM/yyyy HH:mm'}}</p>
+    </div>
+    <app-booking-search></app-booking-search>
+    <div>
+      <button mat-fab extended class="mt-2" (click)="addReservation()" [disabled]="!selectedType || !selectedDate">
+        <div id="content-btn">
+          <span class="material-symbols-outlined pe-2">calendar_month</span>
+          Book reservation
+        </div>
+      </button>
+    </div>
   </div>
-  <app-booking-search></app-booking-search>
-  <div>
-    <button mat-fab extended class="mt-2" (click)="addReservation()" [disabled]="!selectedType || !selectedDate" >
-      <div id="content-btn">
-        <span class="material-symbols-outlined pe-2">calendar_month</span>
-        Book reservation
-      </div>
-    </button>
-  </div>
-
-</div>
+ <mat-progress-spinner *ngIf="creatingReservation" id="progress-spiner" mode="indeterminate">

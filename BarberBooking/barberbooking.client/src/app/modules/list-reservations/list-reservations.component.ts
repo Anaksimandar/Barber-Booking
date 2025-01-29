@@ -4,7 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { EditReservationModalComponent } from '../modal/edit-reservation-modal/edit-reservation-modal.component';
 import { DateEmiterService } from '../../services/date-emiter.service';
-import { NewReservation } from '../../../models/new-reservation-model';
+import { NewReservation } from '../../../models/new-reservation.model';
 import { AccountService } from '../../services/account.service';
 import { take } from 'rxjs';
 import { AuthenticatedUser } from '../../../models/authenticated-user.model';
@@ -22,6 +22,7 @@ export class ListReservationsComponent implements OnInit {
   private currenReservation!: Reservation;
   public currentUser!: AuthenticatedUser | null;
   public isAdmin!: boolean;
+  public isLoading: boolean = false;
 
   constructor(
     private notification: ToastrService,
@@ -69,38 +70,47 @@ export class ListReservationsComponent implements OnInit {
   }
 
   editReservation(newReservation: NewReservation) {
+    this.isLoading = true;
     this.restService.update("reservation", this.currenReservation?.id, newReservation).subscribe({
       next: (result) => {
         this.notification.success("Reservation has been updated successfully");
         this.dateEmitter.setExistingDate(null);
-        this.getAllReservations();      },
+        this.getAllReservations()
+        this.isLoading = false;
+      },
       error: (error) => {
-        this.notification.error(error.error.message);
+        this.notification.error(error);
+        this.isLoading = false;
       }
     })
   }
 
 
   deleteReservation(reservationId: number) {
-    this.restService.delete("reservation", this.currenReservation?.id).subscribe({
+    this.isLoading = true;
+    this.restService.delete("reservation", reservationId).subscribe({
       next: (result) => {
         this.notification.success("Reservation has been successfully deleted");
         this.getAllReservations();
+        this.isLoading = false;
       },
       error: (error) => {
         this.notification.error("Error with deleting reservation");
+        this.isLoading = false;
       }
     })
   }
 
   getAllReservations() {
+    this.isLoading = true;
     this.restService.get("reservation").subscribe({
       next: (result) => {
         this.allReservations = result;
-        console.log(result);
+        this.isLoading = false;
       },
       error: (error) => {
         this.notification.error(error.message);
+        this.isLoading = false;
       }
     })
   }

@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ServiceType } from '../../../../models/service-type.model';
 import { ToastrService } from 'ngx-toastr';
 import { DateEmiterService } from '../../../services/date-emiter.service';
-import { NewReservation } from '../../../../models/new-reservation-model';
+import { NewReservation } from '../../../../models/new-reservation.model';
 
 @Component({
   selector: 'app-edit-reservation-modal',
@@ -24,9 +24,17 @@ export class EditReservationModalComponent implements OnInit {
   close() {
     this.OnClose.emit();
   }
-
+    
   submit() {
-    var newReservation: NewReservation = {serviceTypeId:this.newReservationService.id,dateOfReservation:this.newReservationDate}
+
+    this.newReservationDate = new Date(this.newReservationDate!);
+    const dateOfEndingService: Date = new Date(this.newReservationDate!.getTime() + 30 * 60000);
+
+    var newReservation: NewReservation = {
+      serviceTypeId: this.newReservationService.id,
+      dateOfReservation: this.newReservationDate,
+      dateOfEndingService: dateOfEndingService
+    }
     this.OnSubmit.emit(newReservation);
   }
 

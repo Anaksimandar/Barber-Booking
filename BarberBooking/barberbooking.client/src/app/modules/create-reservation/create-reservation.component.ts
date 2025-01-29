@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ServiceType } from '../../../models/service-type.model';
-import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
-import { NewReservation } from '../../../models/new-reservation-model';
+import { NewReservation } from '../../../models/new-reservation.model';
 import { DateEmiterService } from '../../services/date-emiter.service';
 import { RestService } from '../rest/rest-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-reservation',
@@ -12,15 +12,16 @@ import { RestService } from '../rest/rest-service';
   styleUrls: ['./create-reservation.component.css']
 })
 export class CreateReservationComponent implements OnInit{
-  
+
   public selectedType!: ServiceType | null;
   serviceTypes: ServiceType[] = [];
   public selectedDate!: Date | null;
+  public creatingReservation: boolean = false;
 
   constructor(
-    private httpClient: HttpClient,
     private notification: ToastrService,
-    private restService:RestService,
+    private restService: RestService,
+    private router:Router,
     private dateEmiterService: DateEmiterService) {
 
   }
@@ -29,21 +30,32 @@ export class CreateReservationComponent implements OnInit{
   }
 
   addReservation(): void {
+    this.creatingReservation = true;
     var serviceTypeId: number | null = this.selectedType!.id;
-    var newReservation: NewReservation = { serviceTypeId: serviceTypeId, dateOfReservation: this.selectedDate };
+    const dateOfReservation: Date = new Date(this.selectedDate!.toISOString());
+    const dateOfEndingService = new Date(this.selectedDate!.getTime() + 30 * 60000);
+    const dateOfEndingServiceFormated = new Date(dateOfEndingService.toISOString());
+    var newReservation: NewReservation = {
+      serviceTypeId: serviceTypeId,
+      dateOfReservation: dateOfReservation,
+      dateOfEndingService: dateOfEndingServiceFormated
+    };
 
     this.restService.post("reservation", newReservation).subscribe({
       next: (result) => {
         this.notification.success("Reservation has been created succesfuly");
+        this.notification.success(result.message);
         this.selectedDate = null;
         this.selectedType = null;
+        this.creatingReservation = false;
       },
       error: (error) => {
         console.log(error);
-        this.notification.error(error.error)
+        this.notification.error(error)
+        this.creatingReservation = false;
       }
     })
-    //this.formGroup.reset();
+    
   }
 
 

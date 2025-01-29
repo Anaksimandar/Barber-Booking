@@ -4,7 +4,9 @@ using BarberBooking.Server.Models;
 using BarberBooking.Server.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using System.Net.Http;
+using System.Text.Json;
+using System.IO;
 namespace BarberBooking.Server.Controllers
 {
     [Route("api")]
@@ -12,8 +14,11 @@ namespace BarberBooking.Server.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
-        public AccountController(IAccountService accountService) {
+        private readonly IHttpClientFactory _httpClientFactory;
+        public AccountController(IAccountService accountService, IHttpClientFactory httpClientFactory)
+        {
             _accountService = accountService;
+            _httpClientFactory = httpClientFactory;
         }
 
         [Authorize]
@@ -23,6 +28,44 @@ namespace BarberBooking.Server.Controllers
             var users = await this._accountService.GetUsers();
             return Ok(users);
         }
+        [HttpPost("auth/google/revoke")]
+        public async Task<IActionResult> RevokeAccess()
+        {
+            try
+            {
+                await this._accountService.RevokeAccess();
+                return Ok();
+            }
+            catch (Exception ex) { 
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("auth/google/refresh")]
+        public async Task<IActionResult> RefreshToken()
+        {
+            try
+            {
+                await _accountService.RefreshToken();
+
+                return Ok();
+            }catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        [HttpGet("auth/google")]
+        public async Task<IActionResult> Redirect([FromQuery] string code, [FromQuery] string state)
+        {
+            
+            await _accountService.AccessToken(code);
+            
+            return Redirect("/");
+            
+        }
+
         [HttpPost("login")]
         public async Task<ActionResult<LoginResponse>> Login(LoginUser user)
         {

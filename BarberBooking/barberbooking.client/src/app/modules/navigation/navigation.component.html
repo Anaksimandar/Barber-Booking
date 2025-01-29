@@ -1,22 +1,8 @@
-<div>
-  <ul class="nav nav-pills nav-fill">
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="'/home'" routerLinkActive="active">Home</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="'/list-reservations'" routerLinkActive="active">Reservations</a>
-    </li>
-    <li (click)="logout()" class="nav-item" *ngIf="accountService.isAuthenticated()">
-      <a class="nav-link" [routerLink]="['/']">Logout</a>
-    </li>
-    <li *ngIf="!accountService.isAuthenticated()" class="nav-item">
-      <a class="nav-link" [routerLink]="'/login'" routerLinkActive="active">Login</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="'/change-password'" routerLinkActive="active">Change password</a>
-    </li>
-    <li *ngIf="!accountService.isAuthenticated()" class="nav-item">
-      <a class="nav-link" [routerLink]="'/sign-up'" routerLinkActive="active">Register</a>
-    </li>
-  </ul>
-</div>
+<nav mat-tab-nav-bar>
+  <a mat-tab-link routerLinkActive="active" [routerLink]="'/home'">Home</a>
+  <a mat-tab-link routerLinkActive="active" [routerLink]="'/list-reservations'">Reservation</a>
+  <a mat-tab-link [routerLink]="'/change-password'" routerLinkActive="active">Change password</a>
+  <a *ngIf="!accountService.isAuthenticated()" mat-tab-link routerLinkActive="active" [routerLink]="'/login'">Login</a>
+  <a *ngIf="!accountService.isAuthenticated()" mat-tab-link routerLinkActive="active" [routerLink]="'/sign-up'">Signup</a>
+  <a mat-tab-link *ngIf="accountService.isAuthenticated()" (click)="logout()">Logout</a>
+</nav>

@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, catchError, throwError } from "rxjs";
+import { Observable, catchError, tap, throwError } from "rxjs";
 import { enviroment } from '../../../enviroments/enviroment';
 @Injectable({
   providedIn: 'root'
@@ -12,7 +12,7 @@ export class RestService {
     this.apiUrl = enviroment.apiBaseUrl;
     this.httpOptions = {
       Headers: new HttpHeaders({
-        'Content-Type':'application/json'
+        "Content-Type": "application/json"
       })
     }
   }
@@ -30,7 +30,7 @@ export class RestService {
   }
 
   post(endpoint: string, body: any):Observable<any> {
-    return this.httpClient.post<any>(`${this.apiUrl}/${endpoint}`, JSON.stringify(body), this.httpOptions).pipe(
+    return this.httpClient.post<any>(`${this.apiUrl}/${endpoint}`, body, this.httpOptions).pipe(
       catchError(this.errorHandler)
     )
   }

@@ -2,12 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { LoginUser } from '../../../models/login.model';
-import { HttpClient } from '@angular/common/http';
 import { AccountService } from '../../services/account.service';
-import { LoginResponse } from '../../../models/login-response.model';
 import { Router } from '@angular/router';
 import { RestService } from '../rest/rest-service';
-
 @Component({
   selector: 'app-log-in',
   templateUrl: './log-in.component.html',
@@ -19,7 +16,6 @@ export class LogInComponent implements OnInit {
   constructor(
     private notification: ToastrService,
     private restService:RestService,
-    private http: HttpClient,
     private accountService: AccountService,
     private router: Router
   ) { }
@@ -51,7 +47,11 @@ export class LogInComponent implements OnInit {
 
   onSubmit() {
     if (this.loginForm.valid) {
-      this.login(this.loginForm.value);
+      const user: LoginUser = {
+        email: this.loginForm.get("email")?.value,
+        password: this.loginForm.get("password")?.value
+      }
+      this.login(user);
       this.loginForm.reset();
     }
 

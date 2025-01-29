@@ -26,12 +26,17 @@ import { AccountService } from './services/account.service';
 import { AuthInterceptor } from './modules/rest/auth-interceptor';
 import { ChangePasswordComponent } from './modules/change-password/change-password.component';
 import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { ResetPasswordComponent } from './modules/reset-password/reset-password.component';
 import { ForgotPasswordComponent } from './modules/forgot-password/forgot-password.component';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatListModule } from '@angular/material/list';
+
 
 @NgModule({
   declarations: [
@@ -66,6 +71,10 @@ import { MatIconModule } from '@angular/material/icon';
     MatFormFieldModule,
     MatSelectModule,
     MatIconModule,
+    MatTabsModule,
+    MatListModule,
+    MatProgressSpinnerModule,
+    MatToolbarModule,
     ToastrModule.forRoot({
       timeOut: 3000,
       positionClass: 'toast-top-right',

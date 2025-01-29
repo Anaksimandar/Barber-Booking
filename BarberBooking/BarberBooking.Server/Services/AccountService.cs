@@ -4,6 +4,7 @@ using BarberBooking.Server.Helper.Email;
 using BarberBooking.Server.Helper.Exceptions;
 using BarberBooking.Server.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace BarberBooking.Server.Services
 {
@@ -12,7 +13,14 @@ namespace BarberBooking.Server.Services
         private readonly BarberBookingContext _db;
         private readonly IAuthenticationService _authenticationService;
         private readonly IEmailService _emailService;
-        public AccountService(BarberBookingContext db, IAuthenticationService authenticationService,EmailService emailService) {
+        private readonly IHttpClientFactory _httpClientFactory;
+        public AccountService(
+            BarberBookingContext db,
+            IAuthenticationService authenticationService,
+            EmailService emailService,
+            IHttpClientFactory httpClientFactory
+        ){
+            _httpClientFactory = httpClientFactory;
             _db = db;
             _authenticationService = authenticationService;
             _emailService = emailService;
@@ -95,8 +103,6 @@ namespace BarberBooking.Server.Services
 
         }
 
-        
-
         public async Task ChangePassword(ChangePasswordResponse changePasswordResponse)
         {
             // check does old password exits
@@ -133,6 +139,120 @@ namespace BarberBooking.Server.Services
             user.PasswordToken = null;
 
             await _db.SaveChangesAsync();
+        }
+
+        public string OAuthRedirect()
+        {
+            string googleAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
+                    "scope=https://www.googleapis.com/auth/calendar&" +
+                    "access_type=offline&" +
+                    "response_type=code&" +
+                    "client_id=426884900522-pqhn7ati50jkk6tfb4ouja8vkg6tld66.apps.googleusercontent.com&" +
+                    "redirect_uri=http://localhost:5137/api/auth/google&" +
+                    "state=YOUR_RANDOM_STATE_VALUE";
+
+            return googleAuthUrl;
+        }
+
+
+        public async Task AccessToken(string code)
+        {
+            string tokenFile = "C:\\Users\\acode\\Source\\Repos\\Barber-Booking\\BarberBooking\\BarberBooking.Server\\Files\\tokens.json";
+            var tokenRequest = new Dictionary<string, string>{
+                { "code", code },
+                { "client_id", "426884900522-pqhn7ati50jkk6tfb4ouja8vkg6tld66.apps.googleusercontent.com" },
+                { "client_secret", "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" },
+                { "redirect_uri", "http://localhost:5137/api/auth/google" },
+                { "grant_type", "authorization_code" }
+            };
+
+            var content = new FormUrlEncodedContent(tokenRequest);
+            HttpClient client = _httpClientFactory.CreateClient();
+            var response = await client.PostAsync("https://oauth2.googleapis.com/token", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error retrieving access token");
+            }
+
+            File.WriteAllText(tokenFile, await response.Content.ReadAsStringAsync());
+        }
+
+        public async Task RefreshToken()
+        {
+            string tokensFile = "C:\\Users\\acode\\Source\\Repos\\Barber-Booking\\BarberBooking\\BarberBooking.Server\\Files\\tokens.json";
+            string credentialsFile = "C:\\Users\\acode\\Source\\Repos\\Barber-Booking\\BarberBooking\\BarberBooking.Server\\Files\\credentials.json";
+            GoogleTokensModel? googleTokensModel = JsonSerializer.Deserialize<GoogleTokensModel>(File.ReadAllText(tokensFile));
+            GoogleCredentialsModel? credentialsObject = JsonSerializer.Deserialize<GoogleCredentialsModel>(File.ReadAllText(credentialsFile));
+            string refreshTokenUrl = "https://oauth2.googleapis.com/token";
+
+            if (credentialsObject == null || googleTokensModel == null)
+            {
+                throw new Exception("Credentials or token is invalid");
+            }
+
+            var requestObject = new Dictionary<string, string>
+            {
+                {"client_id",credentialsObject.ClientId },
+                {"client_secret",credentialsObject.ClientSecret },
+                {"refresh_token",googleTokensModel.RefreshToken },
+                {"grant_type","refresh_token"}
+
+            };
+
+            HttpClient client = _httpClientFactory.CreateClient();
+            var body = new FormUrlEncodedContent(requestObject);
+
+            var response = await client.PostAsync(refreshTokenUrl, body);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error with requesting new access token");
+            }
+
+            GoogleRefreshTokenResponse? refreshTokenResponse = JsonSerializer.Deserialize<GoogleRefreshTokenResponse>(await response.Content.ReadAsStringAsync());
+
+            if (refreshTokenResponse == null) {
+                throw new Exception("Refresh token not valid");
+            }
+
+            googleTokensModel.AccessToken = refreshTokenResponse!.AccessToken;
+            googleTokensModel.ExpiresIn = refreshTokenResponse.ExpiresIn;
+            googleTokensModel.Scope = refreshTokenResponse.Scope;
+            googleTokensModel.TokenType = refreshTokenResponse.TokenType;
+
+            string newGoogleTokenModel = JsonSerializer.Serialize<GoogleTokensModel>(googleTokensModel);
+
+            File.WriteAllText(tokensFile, newGoogleTokenModel);
+        }
+
+        public async Task RevokeAccess()
+        {
+            string tokenFile = "C:\\Users\\acode\\Source\\Repos\\Barber-Booking\\BarberBooking\\BarberBooking.Server\\Files\\tokens.json";
+            string jsonTokenFIle = File.ReadAllText(tokenFile);
+            GoogleTokensModel? tokenObject = JsonSerializer.Deserialize<GoogleTokensModel>(jsonTokenFIle);
+            string rewokeUrl = "https://oauth2.googleapis.com/revoke";
+
+            if(tokenObject == null)
+            {
+                throw new Exception("Access token not found");
+            }
+
+            var requestObject = new Dictionary<string, string>
+            {
+                {"token",tokenObject.AccessToken }
+            };
+
+            var body = new FormUrlEncodedContent(requestObject);
+
+            HttpClient client = _httpClientFactory.CreateClient();
+            var response = await client.PostAsync(rewokeUrl, body);
+
+            if(!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error while attempting to revoke access");
+
+            }
         }
     }
 }

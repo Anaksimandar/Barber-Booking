@@ -33,7 +33,7 @@ namespace BarberBooking.Server.Controllers
                 {
                     return Unauthorized(new { message = "User is not authenticated. Please log in." });
                 }
-
+                
                 // Handle other exceptions
                 return StatusCode(500, "An error occurred while retrieving reservations.");
             }
@@ -46,23 +46,15 @@ namespace BarberBooking.Server.Controllers
             {
                 var currentUser = GetCurrentUser();
                 await _reservationsService.CreateReservation(currentUser.Id, newReservation);
-
-                //return CreatedAtAction(nameof(CreateReservation), new { id = newReservation.Id });
-
-                return Ok();
+                
+                return Ok(new { Message="Confirmation link has been send to " + currentUser.Email });
             }
             catch(Exception ex){
                 if (ex.Message == "User is not authenticated" || ex.Message == "Missing email claim")
                 {
-                    return Unauthorized(new { message = ex.Message });
+                    return Unauthorized(new { Message = ex.Message });
                 }
-                if(ex is ArgumentException)
-                {
-                    return BadRequest(ex.Message);
-                }
-
-                // Handle other exceptions
-                return StatusCode(500, "An error occurred while retrieving reservations.");
+                return BadRequest(new { Message = ex.Message });
             }
         }
 

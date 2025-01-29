@@ -11,5 +11,9 @@ namespace BarberBooking.Server.Services
         Task ForgotPassword(string mail);
         Task ResetPassword(ResetPasswordDto resetPasswordDto);
         Task ChangePassword(ChangePasswordResponse changePasswordResponse);
+        string OAuthRedirect();
+        Task AccessToken(string code);
+        Task RefreshToken();
+        Task RevokeAccess();
     }
 }

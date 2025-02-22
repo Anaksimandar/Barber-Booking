@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BarberBooking.Server.Entities
 {
@@ -14,6 +13,7 @@ namespace BarberBooking.Server.Entities
         public required string Name { get; set; }
         public required string Surname { get; set; }
         public required string Email { get; set; }
+        public required string Number { get; set; }
         public required string Password { get; set; }
         public string? PasswordToken { get; set; }
         public ICollection<Reservation>? Reservations { get; set; }

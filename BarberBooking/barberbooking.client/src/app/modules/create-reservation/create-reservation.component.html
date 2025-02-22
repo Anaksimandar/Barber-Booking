@@ -2,7 +2,7 @@
     <mat-form-field id="select-service">
       <mat-label>Choose service</mat-label>
       <mat-select [(ngModel)]="selectedType">
-        <mat-option *ngFor="let st of serviceTypes" [value]="st">{{ st.name }}</mat-option>
+        <mat-option *ngFor="let st of serviceTypes$ | async" [value]="st">{{ st.name }}</mat-option>
       </mat-select>
     </mat-form-field>
     <div>

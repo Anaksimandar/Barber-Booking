@@ -18,7 +18,6 @@ export class ResetPasswordComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private http: HttpClient,
     private restService:RestService,
     private notification: NotificationService) {
     this.route.queryParamMap.subscribe(params => {

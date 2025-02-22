@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { LoginResponse } from '../../models/login-response.model';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AuthenticatedUser } from '../../models/authenticated-user.model';
+import { DateEmiterService } from './date-emiter.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,9 +10,9 @@ import { AuthenticatedUser } from '../../models/authenticated-user.model';
 export class AccountService {
   private currentUserSubject: BehaviorSubject<AuthenticatedUser | null>;
   public currentUser$: Observable<AuthenticatedUser | null>;
-  constructor() {
+  constructor(private dateEmiterService: DateEmiterService) {
     this.currentUserSubject = new BehaviorSubject<AuthenticatedUser | null>(this.getCurrentUserFromStorage());
-    this.currentUser$ = this.currentUserSubject.asObservable()
+    this.currentUser$ = this.currentUserSubject.asObservable();
   }
 
   loginUser(response:LoginResponse) {
@@ -25,9 +26,11 @@ export class AccountService {
 
   isAuthenticated(): boolean {
     const token = this.getToken();
-    if (!token && this.isTokenExpired(token)) {
+
+    if (!token || this.isTokenExpired(token)) {
       return false;
     }
+
     return true;
   }
 
@@ -49,8 +52,10 @@ export class AccountService {
 
   logout() {
     localStorage.removeItem("user");
-    localStorage.removeItem("token")
+    localStorage.removeItem("token");
 
+    //this.dateEmiterService.setExistingDate(null);
+    //this.dateEmiterService.setNewDate(null);
     if (this.currentUserSubject) {
       this.currentUserSubject.next(null)
     }

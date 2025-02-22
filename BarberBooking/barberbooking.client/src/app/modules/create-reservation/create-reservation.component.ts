@@ -5,23 +5,24 @@ import { NewReservation } from '../../../models/new-reservation.model';
 import { DateEmiterService } from '../../services/date-emiter.service';
 import { RestService } from '../rest/rest-service';
 import { Router } from '@angular/router';
+import { Observable, catchError, of, tap } from 'rxjs';
 
 @Component({
   selector: 'app-create-reservation',
   templateUrl: './create-reservation.component.html',
   styleUrls: ['./create-reservation.component.css']
 })
-export class CreateReservationComponent implements OnInit{
+export class CreateReservationComponent implements OnInit {
 
   public selectedType!: ServiceType | null;
-  serviceTypes: ServiceType[] = [];
+  serviceTypes$!: Observable<ServiceType[]>;
   public selectedDate!: Date | null;
   public creatingReservation: boolean = false;
 
   constructor(
     private notification: ToastrService,
     private restService: RestService,
-    private router:Router,
+    private router: Router,
     private dateEmiterService: DateEmiterService) {
 
   }
@@ -55,25 +56,20 @@ export class CreateReservationComponent implements OnInit{
         this.creatingReservation = false;
       }
     })
-    
+
   }
 
 
   ngOnInit() {
-    this.dateEmiterService.existingDate$.subscribe((date:Date | null) => {
+    this.dateEmiterService.existingDate$.subscribe((date: Date | null) => {
       this.selectedDate = date;
     })
 
-    this.restService.get("service-type").subscribe({
-      next: (result) => {
-        this.serviceTypes = result;
-      },
-      error: (error) => {
-        this.notification.error(error.message)
-      }
-    })
+    this.serviceTypes$ = this.restService.get("service-type").pipe(
+      catchError(err => {
+        this.notification.error(err);
+        return of([]);
+      })
+    )
   }
-
-
-
 }

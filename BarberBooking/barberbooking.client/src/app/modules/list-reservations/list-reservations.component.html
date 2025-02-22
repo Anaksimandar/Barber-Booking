@@ -1,38 +1,58 @@
 <div class="container">
   <app-navigation></app-navigation>
 
-  <table class="table table-striped table-hover">
-    <thead class="thead-dark">
-      <tr>
-        <th scope="col">User</th>
-        <th scope="col">Service Type</th>
-        <th scope="col">Date of Reservation</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let reservation of allReservations">
-        <td>{{currentUser?.name}} {{currentUser?.surname}}</td>
-        <td>
-          <strong>{{ reservation.serviceType?.name }}</strong><br>
-          {{ reservation.serviceType?.description }}<br>
-          <span *ngIf="reservation.serviceType?.price">
-            Price: {{ reservation.serviceType?.price | currency:'EU' }}
-          </span>
-        </td>
-        <td>{{ reservation.dateOfReservation | date:'dd/MM/yyyy HH:mm' }}</td>
-        <td>
-          <button (click)="deleteReservation(reservation.id)" mat-mini-fab aria-label="Delete">
-            <mat-icon>delete</mat-icon>
-          </button>
-          <button class="ms-4" (click)="openEditReservationModal(reservation)" mat-icon-button aria-label="Edit">
-            <mat-icon>more_vert</mat-icon>
-          </button>
+  <table mat-table [dataSource]="initialData" class="mat-elevation-z8 table table-striped table-hover">
 
-        </td>
-      </tr>
-    </tbody>
+    <!-- User Column -->
+    <ng-container matColumnDef="user">
+      <th mat-header-cell *matHeaderCellDef>User</th>
+      <td mat-cell *matCellDef="let reservation">{{ currentUser?.name }} {{ currentUser?.surname }}</td>
+    </ng-container>
+
+    <!-- Service Type Column -->
+    <ng-container matColumnDef="serviceType">
+      <th mat-header-cell *matHeaderCellDef>Service Type</th>
+      <td mat-cell *matCellDef="let reservation">
+        <strong>{{ reservation.serviceType?.name }}</strong><br>
+        {{ reservation.serviceType?.description }}<br>
+        <span *ngIf="reservation.serviceType?.price">
+          Price: {{ reservation.serviceType?.price | currency:'EU' }}
+        </span>
+      </td>
+    </ng-container>
+
+    <!-- Date Column -->
+    <ng-container matColumnDef="dateOfReservation">
+      <th mat-header-cell *matHeaderCellDef>Date of Reservation</th>
+      <td mat-cell *matCellDef="let reservation">
+        {{ reservation.dateOfReservation | date:'dd/MM/yyyy HH:mm' }}
+      </td>
+    </ng-container>
+
+    <!-- Actions Column -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let reservation">
+        <button (click)="deleteReservation(reservation.id)" mat-mini-fab aria-label="Delete">
+          <mat-icon>delete</mat-icon>
+        </button>
+        <button class="ms-4" (click)="openEditReservationModal(reservation)" mat-icon-button aria-label="Edit">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <!-- Header & Row Declarations -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
 
+  <!-- Paginator -->
+  <mat-paginator [length]="reservations.length"
+                 [pageSize]="5"
+                 [pageSizeOptions]="[5, 10, 25, 100]"
+                 aria-label="Select page">
+  </mat-paginator>
 </div>
 
-<mat-progress-spinner *ngIf="isLoading" id="progress-spiner" mode="indeterminate">
+<mat-progress-spinner *ngIf="isLoading" id="progress-spiner" mode="indeterminate"></mat-progress-spinner>

@@ -8,7 +8,7 @@
     <mat-form-field id="select-service">
       <mat-label>Choose service</mat-label>
       <mat-select [(ngModel)]="newReservationService">
-        <mat-option *ngFor="let st of serviceTypes" [value]="st">{{ st.name }}</mat-option>
+        <mat-option *ngFor="let st of serviceTypes$ | async" [value]="st">{{ st.name }}</mat-option>
       </mat-select>
     </mat-form-field>
     <div>
@@ -18,7 +18,7 @@
     <app-booking-search></app-booking-search>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-success" (click)="submit()">Save changes</button>
-    <button type="button" class="btn btn-outline-secondary" (click)="close()">Close</button>
+    <button mat-fab extended class="mt-2 btn-success" (click)="submit()">Save</button>
+    <button mat-fab extended color="warn" class="mt-2" (click)="close()">Cancel</button>
   </div>
 </div>

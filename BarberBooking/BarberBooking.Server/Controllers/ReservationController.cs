@@ -45,7 +45,7 @@ namespace BarberBooking.Server.Controllers
             try
             {
                 var currentUser = GetCurrentUser();
-                await _reservationsService.CreateReservation(currentUser.Id, newReservation);
+                await _reservationsService.CreateReservation(currentUser.Id, currentUser.Number ,newReservation);
                 
                 return Ok(new { Message="Confirmation link has been send to " + currentUser.Email });
             }
@@ -61,14 +61,14 @@ namespace BarberBooking.Server.Controllers
         [HttpDelete("{reservationId}")]
         public async Task<IActionResult> DeleteReservation(int reservationId)
         {
-            bool isDeleted = await _reservationsService.DeleteReservation(reservationId);
-
-            if(isDeleted)
+            try
             {
-                return NoContent();
+                await _reservationsService.DeleteReservation(reservationId);
+                return Ok();
             }
-
-            return NotFound();
+            catch (Exception ex) { 
+                return NotFound(ex.Message);
+            }
         }
 
         [HttpPut("{reservationId}")]

@@ -2,6 +2,6 @@
 {
     public interface IAuthenticationService
     {
-        string CreateJwtToken(string mail);
+        string CreateJwtToken(string? mail);
     }
 }

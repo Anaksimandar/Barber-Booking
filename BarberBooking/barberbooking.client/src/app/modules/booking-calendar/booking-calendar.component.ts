@@ -49,6 +49,7 @@ export class BookingCalendarComponent implements OnInit {
   loadBookings(): void {
     this.restService.get("reservation").subscribe({
       next: (result) => {
+        console.log(result);
         this.calendarOptions.events = result.map(booking => ({
           title: booking.userId?.toString(),
           start: new Date(booking.dateOfReservation!),
@@ -148,7 +149,7 @@ export class BookingCalendarComponent implements OnInit {
 
   openAvailableHoursModal(date: Date, bookedHours: StartEndDate[]): void {
     const availableHours = this.computeAvailableHours(bookedHours); // calculating avaiable hours
-    
+    console.log(availableHours);
     this.availableHoursModalRef = this.modalService.open(AvailableHoursModalComponent, { backdrop: false, size: 'md' });
     this.availableHoursModalRef.componentInstance.initialHours = availableHours[0];
     this.availableHoursModalRef.componentInstance.date = date;

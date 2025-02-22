@@ -1,9 +1,10 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ServiceType } from '../../../../models/service-type.model';
 import { ToastrService } from 'ngx-toastr';
 import { DateEmiterService } from '../../../services/date-emiter.service';
 import { NewReservation } from '../../../../models/new-reservation.model';
+import { Observable, catchError, of } from 'rxjs';
+import { RestService } from '../../rest/rest-service';
 
 @Component({
   selector: 'app-edit-reservation-modal',
@@ -11,13 +12,17 @@ import { NewReservation } from '../../../../models/new-reservation.model';
   styleUrls: ['./edit-reservation-modal.component.css']
 })
 export class EditReservationModalComponent implements OnInit {
-  public serviceTypes?: ServiceType[];
+  public serviceTypes$!: Observable<ServiceType[]>;
   @Input() newReservationService!: ServiceType;
   @Input() newReservationDate: Date | null = null;
   @Output() OnClose = new EventEmitter();
   @Output() OnSubmit = new EventEmitter<NewReservation>();
 
-  constructor(private httpClient: HttpClient, private notification:ToastrService, private dateEmitterService:DateEmiterService) {
+  constructor(
+    private notification: ToastrService,
+    private dateEmitterService: DateEmiterService,
+    private restService:RestService
+    ) {
 
   }
 
@@ -26,7 +31,6 @@ export class EditReservationModalComponent implements OnInit {
   }
     
   submit() {
-
     this.newReservationDate = new Date(this.newReservationDate!);
     const dateOfEndingService: Date = new Date(this.newReservationDate!.getTime() + 30 * 60000);
 
@@ -45,13 +49,11 @@ export class EditReservationModalComponent implements OnInit {
     this.dateEmitterService.newDate$.subscribe((date: Date | null) => {
       this.newReservationDate = date;
     })
-    this.httpClient.get<ServiceType[]>("http://localhost:5137/api/service-type").subscribe(
-      (result) => {
-        this.serviceTypes = result;
-      },
-      (error) => {
-        this.notification.error(error.message)
-      }
+    this.serviceTypes$ = this.restService.get("service-type").pipe(
+      catchError(err => {
+        this.notification.error(err);
+        return of([]);
+      })
     )
     
   }

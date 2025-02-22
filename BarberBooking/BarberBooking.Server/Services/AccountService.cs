@@ -1,9 +1,11 @@
 ﻿using BarberBooking.Server.Entities;
 using BarberBooking.Server.Helper.Authentication;
 using BarberBooking.Server.Helper.Email;
-using BarberBooking.Server.Helper.Exceptions;
+using BarberBooking.Server.Helper.Validators;
 using BarberBooking.Server.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Crypto.Generators;
 using System.Text.Json;
 
 namespace BarberBooking.Server.Services
@@ -35,19 +37,18 @@ namespace BarberBooking.Server.Services
 
         public async Task<LoginResponse> Login(LoginUser loginUser)
         {
-            var user = await _db.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Email == loginUser.Email);
-
-            if (user == null)
+            if (loginUser == null)
             {
-                throw new ArgumentException("User with provided email doesn't exists");
+                throw new ArgumentException("Login data is not provided");
             }
 
-            if(user.Password != loginUser.Password)
-            {
-                throw new UnauthorizedAccessException("Mail or passwords are not valid");
-            }
+            User? user = await _db.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Email == loginUser.Email);
+
+            Validator.LoginUserValidator(loginUser, user);
+
             // generating token based on email
             var token = _authenticationService.CreateJwtToken(loginUser.Email);
+
             // returning response object with logged in user and his token
             AuthenticatedUser authenticatedUser = new AuthenticatedUser()
             {
@@ -63,16 +64,17 @@ namespace BarberBooking.Server.Services
 
         public async Task Register(UserRegistration user)
         {
-            if(user.Name == null || user.Surname == null || user.Password == null || user.ConfirmPassword == null || user.Email == null)
-            {
-                throw new ArgumentException("Please check your data");
-            }
+            Validator.RegisterUserValidator(user);
+
+            string encryptedPassword = new PasswordHasher<string>().HashPassword(null,user.Password);
+
             User newUser = new User()
             {
                 Name = user.Name,
                 Surname = user.Surname,
                 Email = user.Email,
-                Password = user.Password,
+                Number = user.Number,
+                Password = encryptedPassword,
                 RoleId = user.RoleId = user.RoleId
             };
 
@@ -80,6 +82,8 @@ namespace BarberBooking.Server.Services
             await _db.SaveChangesAsync();
 
         }
+
+
 
         public async Task ForgotPassword(string mail) // this service should generate id and send on provided email
         {
@@ -107,16 +111,15 @@ namespace BarberBooking.Server.Services
         {
             // check does old password exits
             User? user = await this._db.Users.FirstOrDefaultAsync(u => u.Email == changePasswordResponse.Mail);
+
             if (user == null) {
                 throw new ArgumentException("User doesnt exists");
             }
 
-            if(user.Password != changePasswordResponse.OldPassword)
-            {
-                throw new ArgumentException("Please enter correct old password");
-            }
+            Validator.SamePassword(changePasswordResponse.OldPassword, user.Password);
 
-            user.Password = changePasswordResponse.NewPassword;
+            user.Password = new PasswordHasher<string>().HashPassword(null, changePasswordResponse.NewPassword);
+
             await _db.SaveChangesAsync();
         }
 
@@ -127,15 +130,13 @@ namespace BarberBooking.Server.Services
 
             if(user == null)
             {
-                throw new EmailTokenException("Unable to reset password");
+                throw new ArgumentException("Unable to reset password");
             }
 
-            if(resetPasswordDto.NewPassword != resetPasswordDto.ConfirmNewPassword)
-            {
-                throw new ArgumentException("Passwords are not same");
-            }
+            Validator.SamePassword(resetPasswordDto.NewPassword, resetPasswordDto.ConfirmNewPassword);
 
-            user.Password = resetPasswordDto.NewPassword;
+            user.Password = user.Password = new PasswordHasher<string>().HashPassword(null, resetPasswordDto.NewPassword);
+
             user.PasswordToken = null;
 
             await _db.SaveChangesAsync();
@@ -158,107 +159,107 @@ namespace BarberBooking.Server.Services
         }
 
 
-        public async Task AccessToken(string code)
-        {
-            string tokensFile = "C:\\Users\\acode\\Source\\Repos\\Barber-Booking\\BarberBooking\\BarberBooking.Server\\Files\\tokens.json";
-            string credentialsFile = "C:\\Users\\acode\\Source\\Repos\\Barber-Booking\\BarberBooking\\BarberBooking.Server\\Files\\credentials.json";
-            GoogleCredentialsModel? credentialsObject = JsonSerializer.Deserialize<GoogleCredentialsModel>(File.ReadAllText(credentialsFile));
+        //public async Task AccessToken(string code)
+        //{
+        //    string tokensFile = "C:\\Users\\acode\\Source\\Repos\\Barber-Booking\\BarberBooking\\BarberBooking.Server\\Files\\tokens.json";
+        //    string credentialsFile = "C:\\Users\\acode\\Source\\Repos\\Barber-Booking\\BarberBooking\\BarberBooking.Server\\Files\\credentials.json";
+        //    GoogleCredentialsModel? credentialsObject = JsonSerializer.Deserialize<GoogleCredentialsModel>(File.ReadAllText(credentialsFile));
 
-            var tokenRequest = new Dictionary<string, string>{
-                { "code", code },
-                { "client_id", credentialsObject!.ClientId},
-                { "client_secret", credentialsObject.ClientSecret },
-                { "redirect_uri", "http://localhost:5137/api/auth/google" },
-                { "grant_type", "authorization_code" }
-            };
+        //    var tokenRequest = new Dictionary<string, string>{
+        //        { "code", code },
+        //        { "client_id", credentialsObject!.ClientId},
+        //        { "client_secret", credentialsObject.ClientSecret },
+        //        { "redirect_uri", "http://localhost:5137/api/auth/google" },
+        //        { "grant_type", "authorization_code" }
+        //    };
 
-            var content = new FormUrlEncodedContent(tokenRequest);
-            HttpClient client = _httpClientFactory.CreateClient();
-            var response = await client.PostAsync("https://oauth2.googleapis.com/token", content);
+        //    var content = new FormUrlEncodedContent(tokenRequest);
+        //    HttpClient client = _httpClientFactory.CreateClient();
+        //    var response = await client.PostAsync("https://oauth2.googleapis.com/token", content);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new Exception("Error retrieving access token");
-            }
+        //    if (!response.IsSuccessStatusCode)
+        //    {
+        //        throw new Exception("Error retrieving access token");
+        //    }
 
-            File.WriteAllText(tokensFile, await response.Content.ReadAsStringAsync());
-        }
+        //    File.WriteAllText(tokensFile, await response.Content.ReadAsStringAsync());
+        //}
 
-        public async Task RefreshToken()
-        {
-            string tokensFile = "C:\\Users\\acode\\Source\\Repos\\Barber-Booking\\BarberBooking\\BarberBooking.Server\\Files\\tokens.json";
-            string credentialsFile = "C:\\Users\\acode\\Source\\Repos\\Barber-Booking\\BarberBooking\\BarberBooking.Server\\Files\\credentials.json";
-            GoogleTokensModel? googleTokensModel = JsonSerializer.Deserialize<GoogleTokensModel>(File.ReadAllText(tokensFile));
-            GoogleCredentialsModel? credentialsObject = JsonSerializer.Deserialize<GoogleCredentialsModel>(File.ReadAllText(credentialsFile));
-            string refreshTokenUrl = "https://oauth2.googleapis.com/token";
+        //public async Task RefreshToken()
+        //{
+        //    string tokensFile = "C:\\Users\\acode\\Source\\Repos\\Barber-Booking\\BarberBooking\\BarberBooking.Server\\Files\\tokens.json";
+        //    string credentialsFile = "C:\\Users\\acode\\Source\\Repos\\Barber-Booking\\BarberBooking\\BarberBooking.Server\\Files\\credentials.json";
+        //    GoogleTokensModel? googleTokensModel = JsonSerializer.Deserialize<GoogleTokensModel>(File.ReadAllText(tokensFile));
+        //    GoogleCredentialsModel? credentialsObject = JsonSerializer.Deserialize<GoogleCredentialsModel>(File.ReadAllText(credentialsFile));
+        //    string refreshTokenUrl = "https://oauth2.googleapis.com/token";
 
-            if (credentialsObject == null || googleTokensModel == null)
-            {
-                throw new Exception("Credentials or token is invalid");
-            }
+        //    if (credentialsObject == null || googleTokensModel == null)
+        //    {
+        //        throw new Exception("Credentials or token is invalid");
+        //    }
 
-            var requestObject = new Dictionary<string, string>
-            {
-                {"client_id",credentialsObject.ClientId },
-                {"client_secret",credentialsObject.ClientSecret },
-                {"refresh_token",googleTokensModel.RefreshToken },
-                {"grant_type","refresh_token"}
+        //    var requestObject = new Dictionary<string, string>
+        //    {
+        //        {"client_id",credentialsObject.ClientId },
+        //        {"client_secret",credentialsObject.ClientSecret },
+        //        {"refresh_token",googleTokensModel.RefreshToken },
+        //        {"grant_type","refresh_token"}
 
-            };
+        //    };
 
-            HttpClient client = _httpClientFactory.CreateClient();
-            var body = new FormUrlEncodedContent(requestObject);
+        //    HttpClient client = _httpClientFactory.CreateClient();
+        //    var body = new FormUrlEncodedContent(requestObject);
 
-            var response = await client.PostAsync(refreshTokenUrl, body);
+        //    var response = await client.PostAsync(refreshTokenUrl, body);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new Exception("Error with requesting new access token");
-            }
+        //    if (!response.IsSuccessStatusCode)
+        //    {
+        //        throw new Exception("Error with requesting new access token");
+        //    }
 
-            GoogleRefreshTokenResponse? refreshTokenResponse = JsonSerializer.Deserialize<GoogleRefreshTokenResponse>(await response.Content.ReadAsStringAsync());
+        //    GoogleRefreshTokenResponse? refreshTokenResponse = JsonSerializer.Deserialize<GoogleRefreshTokenResponse>(await response.Content.ReadAsStringAsync());
 
-            if (refreshTokenResponse == null) {
-                throw new Exception("Refresh token not valid");
-            }
+        //    if (refreshTokenResponse == null) {
+        //        throw new Exception("Refresh token not valid");
+        //    }
 
-            googleTokensModel.AccessToken = refreshTokenResponse!.AccessToken;
-            googleTokensModel.ExpiresIn = refreshTokenResponse.ExpiresIn;
-            googleTokensModel.Scope = refreshTokenResponse.Scope;
-            googleTokensModel.TokenType = refreshTokenResponse.TokenType;
+        //    googleTokensModel.AccessToken = refreshTokenResponse!.AccessToken;
+        //    googleTokensModel.ExpiresIn = refreshTokenResponse.ExpiresIn;
+        //    googleTokensModel.Scope = refreshTokenResponse.Scope;
+        //    googleTokensModel.TokenType = refreshTokenResponse.TokenType;
 
-            string newGoogleTokenModel = JsonSerializer.Serialize<GoogleTokensModel>(googleTokensModel);
+        //    string newGoogleTokenModel = JsonSerializer.Serialize<GoogleTokensModel>(googleTokensModel);
 
-            File.WriteAllText(tokensFile, newGoogleTokenModel);
-        }
+        //    File.WriteAllText(tokensFile, newGoogleTokenModel);
+        //}
 
-        public async Task RevokeAccess()
-        {
-            string tokenFile = "C:\\Users\\acode\\Source\\Repos\\Barber-Booking\\BarberBooking\\BarberBooking.Server\\Files\\tokens.json";
-            string jsonTokenFIle = File.ReadAllText(tokenFile);
-            GoogleTokensModel? tokenObject = JsonSerializer.Deserialize<GoogleTokensModel>(jsonTokenFIle);
-            string rewokeUrl = "https://oauth2.googleapis.com/revoke";
+        //public async Task RevokeAccess()
+        //{
+        //    string tokenFile = "C:\\Users\\acode\\Source\\Repos\\Barber-Booking\\BarberBooking\\BarberBooking.Server\\Files\\tokens.json";
+        //    string jsonTokenFIle = File.ReadAllText(tokenFile);
+        //    GoogleTokensModel? tokenObject = JsonSerializer.Deserialize<GoogleTokensModel>(jsonTokenFIle);
+        //    string rewokeUrl = "https://oauth2.googleapis.com/revoke";
 
-            if(tokenObject == null)
-            {
-                throw new Exception("Access token not found");
-            }
+        //    if(tokenObject == null)
+        //    {
+        //        throw new Exception("Access token not found");
+        //    }
 
-            var requestObject = new Dictionary<string, string>
-            {
-                {"token",tokenObject.AccessToken }
-            };
+        //    var requestObject = new Dictionary<string, string>
+        //    {
+        //        {"token",tokenObject.AccessToken }
+        //    };
 
-            var body = new FormUrlEncodedContent(requestObject);
+        //    var body = new FormUrlEncodedContent(requestObject);
 
-            HttpClient client = _httpClientFactory.CreateClient();
-            var response = await client.PostAsync(rewokeUrl, body);
+        //    HttpClient client = _httpClientFactory.CreateClient();
+        //    var response = await client.PostAsync(rewokeUrl, body);
 
-            if(!response.IsSuccessStatusCode)
-            {
-                throw new Exception("Error while attempting to revoke access");
+        //    if(!response.IsSuccessStatusCode)
+        //    {
+        //        throw new Exception("Error while attempting to revoke access");
 
-            }
-        }
+        //    }
+        //}
     }
 }

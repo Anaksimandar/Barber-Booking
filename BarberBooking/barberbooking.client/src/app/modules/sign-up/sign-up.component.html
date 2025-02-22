@@ -1,18 +1,35 @@
 <div class="container">
   <app-navigation></app-navigation>
-
-  <div class="form-container">
-    <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
-      <h2>Create An Account</h2>
-      <p>Create an account to enjoy all the services without any ads for free!</p>
-      <input formControlName="name" placeholder="Name">
-      <input formControlName="surname" placeholder="Surname">
-      <input formControlName="email" placeholder="Email Address">
-      <input formControlName="password" placeholder="Password">
-      <input formControlName="confirmPassword" placeholder="Confirm password">
-      <button [disabled]="!signUpForm.valid" type="submit">Sign up</button>
-
-      <p>Already have account ? <a [routerLink]="['/login']">Login</a></p>
+  <div class="main">
+    <h3 class="display-6 text-center">Register</h3>
+    <p class="mb-2">Create an account to enjoy all the services without any ads for free!</p>
+    <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()" class="example-form">
+      <mat-form-field class="input">
+        <mat-label>Name</mat-label>
+        <input formControlName="name" matInput>
+      </mat-form-field>
+      <mat-form-field class="input">
+        <mat-label>Surname</mat-label>
+        <input formControlName="surname" matInput>
+      </mat-form-field>
+      <mat-form-field class="input">
+        <mat-label>Mail</mat-label>
+        <input formControlName="email" matInput>
+      </mat-form-field>
+      <mat-form-field class="input">
+        <mat-label>Number</mat-label>
+        <input formControlName="number" matInput>
+      </mat-form-field>
+      <mat-form-field class="input">
+        <mat-label>Password</mat-label>
+        <input formControlName="password" type="password" matInput>
+      </mat-form-field>
+      <mat-form-field class="input">
+        <mat-label>Confirm Password</mat-label>
+        <input formControlName="confirmPassword" type="password" matInput>
+      </mat-form-field>
+      <button [disabled]="!signUpForm.valid" type="submit" id="save-pass-btn" mat-raised-button>Login</button>
     </form>
+    <p>Already have account ? <a [routerLink]="['/login']">Login</a></p>
   </div>
 </div>

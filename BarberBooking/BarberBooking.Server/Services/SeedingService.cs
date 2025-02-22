@@ -80,6 +80,7 @@ namespace BarberBooking.Server.Services
                         Surname = "Petrovic",
                         Email = "acodex00@gmail.com",
                         Password = "12345",
+                        Number = "0665179976",
                         RoleId = 1
                     },
                     new User()
@@ -88,6 +89,7 @@ namespace BarberBooking.Server.Services
                         Surname = "Ilic",
                         Email = "miki223@gmail.com",
                         Password = "54321",
+                        Number = "0665179976",
                         RoleId = 2
                     }
                 };

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Mail;
 using System.Net;
+using BarberBooking.Server.Services.Sms;
 
 namespace BarberBooking.Server.Services
 {
@@ -43,12 +44,12 @@ namespace BarberBooking.Server.Services
             await _db.SaveChangesAsync();
         }
 
-        public async Task CreateReservation(int creatorId, NewReservation newReservation)
+        public async Task CreateReservation(int creatorId, string number, NewReservation newReservation)
         {
             
-            DateTime newReservationDatelocalTime = newReservation.DateOfReservation.ToLocalTime();
+            DateTime newReservationDatelocalTime = FormatedDateTime(newReservation.DateOfReservation);
 
-            if(newReservationDatelocalTime < DateTime.Now)
+            if(IsDateTimeInPast(newReservationDatelocalTime))
             {
                 throw new ArgumentException("Time of reservation cannot be in past");
             }  
@@ -57,22 +58,31 @@ namespace BarberBooking.Server.Services
             {
                 throw new Exception("Date of reservation already exists, please choose other one");
             }
+
             await SaveReservation(creatorId, newReservation.ServiceTypeId, newReservationDatelocalTime);
 
-            // redirecting to oauth page
-            //return _accountService.OAuthRedirect();
-            string calendarLink = GenerateCalendarLink(newReservation.DateOfReservation, newReservation.DateOfEndingService);
-            string body = GenerateCalendarBody(calendarLink);
             try
             {
-                this._smsService.SendSms("+381665179976", "Test sms");
-                await this._emailService.SendEmail("aleksapetrovicoffice@gmail.com", "Succesfull booked service", body);
-
+                await SendCalendarReminder(newReservation);
+                await SendSmsConfirmation(number, "Your reservation has been created succesfully");
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
+        }
+
+        private async Task SendSmsConfirmation(string number, string message)
+        {
+            await _smsService.SendConfirmation(number, message);
+
+        }
+
+        private async Task SendCalendarReminder(NewReservation newReservation)
+        {
+            string calendarLink = GenerateCalendarLink(newReservation.DateOfReservation, newReservation.DateOfEndingService);
+            string body = GenerateCalendarBody(calendarLink);
+            await this._emailService.SendEmail("aleksapetrovicoffice@gmail.com", "Succesfull booked service", body);
         }
 
         private string GenerateCalendarLink(DateTime startingDate, DateTime endingDate)
@@ -94,31 +104,34 @@ namespace BarberBooking.Server.Services
                         </ul>";
         }
 
-        public async Task<bool> DeleteReservation(int reservationId)
+        public async Task DeleteReservation(int reservationId)
         {
-            try
+            var reservation = await _db.Reservations.FindAsync(reservationId);
+
+            if (reservation == null)
             {
-                var reservation = await _db.Reservations.FindAsync(reservationId);
-                if (reservation != null)
-                {
-                    _db.Reservations.Remove(reservation);
-                    await _db.SaveChangesAsync();
-                    return true; // Deletion successful
-                }
-                return false; // Reservation not found
+                throw new Exception("Reservation not found");
             }
-            catch (DbUpdateException ex)
-            {
-                // Handle database update exceptions
-                throw new Exception("An error occurred while deleting the reservation.", ex);
-            }
-            catch (Exception ex)
-            {
-                // Handle any other exceptions
-                throw new Exception("An unexpected error occurred.", ex);
-            }
+
+            await DeleteReservation(reservation);  
         }
 
+        private async Task DeleteReservation(Reservation reservation)
+        {
+            _db.Reservations.Remove(reservation);
+
+            await _db.SaveChangesAsync();
+        }
+
+        private bool IsDateTimeInPast(DateTime date)
+        {
+            return date < DateTime.Now;
+        }
+
+        private DateTime FormatedDateTime(DateTime dateTime)
+        {
+            return dateTime.ToLocalTime();
+        }
 
         public async Task<List<Reservation>> GetReservations(int currentUserId, RoleType currentUserRole)
         {
@@ -134,35 +147,50 @@ namespace BarberBooking.Server.Services
 
         public async Task UpdateReservation(int creatorId,int reservationId, NewReservation newReservation)
         {
-            DateTime formatedDateOfReservation = newReservation.DateOfReservation.ToLocalTime();
-
+            DateTime formatedDateTime = FormatedDateTime(newReservation.DateOfReservation);
             /*
              * we shoud check doest reservation with provided resId have userId of auth user.
-             * Why ? Because if we dont check it means anyone could just add rndres id and change date of that reservation
+             * Why ? Because if we dont check it means anyone could just add rnd res_id and change date of that reservation
             */
-            if (formatedDateOfReservation < DateTime.Now)
+            if (IsDateTimeInPast(formatedDateTime))
             {
                 throw new ArgumentException("Time of reservation cannot be in past");
             }
 
-            Reservation? existingReservation = await _db.Reservations.Include(r => r.User).Include(r => r.ServiceType).FirstOrDefaultAsync(r => r.Id == reservationId && r.UserId == creatorId);
+            // checking can user try to change reservation that isnt his own.
+            List<Reservation> reservations = _db.Reservations
+                .Where(r => r.UserId == creatorId).ToList();
+
+            Reservation? existingReservation = reservations.FirstOrDefault(r => r.Id == reservationId);
 
             if (existingReservation == null)
             {
                 throw new ArgumentException("Reservation doesnt exists");
             }
 
-            if (IsReservationBooked(formatedDateOfReservation))
+            // current date time is already booked by other reservation (for current is allowed to confirmed to book again)
+            bool isAllowedToEdit = reservations.Any(r =>
+                r.UserId == creatorId &&
+                r.Id == reservationId &&
+                r.DateOfReservation.Date == newReservation.DateOfReservation.Date &&
+                r.DateOfReservation.Hour == newReservation.DateOfReservation.Hour &&
+                r.DateOfReservation.Minute == newReservation.DateOfReservation.Minute
+                
+            );
+
+            if (isAllowedToEdit)
             {
-                throw new ArgumentException("Reservation with provided date is already booked. Please choose other one");
+                throw new ArgumentException("Date already exists");
             }
 
             existingReservation.ServiceTypeId = newReservation.ServiceTypeId;
-            existingReservation.DateOfReservation = formatedDateOfReservation;
+            existingReservation.DateOfReservation = formatedDateTime;
             // validation for date
             _db.Reservations.Update(existingReservation);
             await _db.SaveChangesAsync();
 
         }
+
+
     }
 }

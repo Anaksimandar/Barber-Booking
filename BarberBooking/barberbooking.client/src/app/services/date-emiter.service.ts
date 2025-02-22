@@ -14,7 +14,7 @@ export class DateEmiterService {
     this.existingDate.next(date);
   }
 
-  setNewDate(date: Date) {
+  setNewDate(date: Date | null) {
     this.newDate.next(date);
   }
 

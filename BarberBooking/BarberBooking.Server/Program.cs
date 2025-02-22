@@ -2,6 +2,7 @@ using BarberBooking.Server.Entities;
 using BarberBooking.Server.Helper.Authentication;
 using BarberBooking.Server.Helper.Email;
 using BarberBooking.Server.Services;
+using BarberBooking.Server.Services.Sms;
 using BarberBooking.Server.Services.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
+
 builder.Services.AddScoped<ISeedingService, SeedingService>();
 builder.Services.AddScoped<IReservationsService, ReservationService>();
 builder.Services.AddScoped<IServiceTypeService, ServiceTypeService>();

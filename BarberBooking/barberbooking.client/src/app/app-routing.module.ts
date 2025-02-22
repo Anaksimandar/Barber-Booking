@@ -10,7 +10,7 @@ import { ResetPasswordComponent } from './modules/reset-password/reset-password.
 import { ChangePasswordComponent } from './modules/change-password/change-password.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: '', redirectTo: '/home', pathMatch: 'full'},
   { path: 'home', component: HomeComponent, canActivate:[AuthGuard] },
   { path: 'list-reservations', component: ListReservationsComponent,canActivate:[AuthGuard] },
   { path: 'sign-up', component: SignUpComponent },

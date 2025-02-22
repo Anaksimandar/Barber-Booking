@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Reservation } from '../../../models/reservation.model';
 import { ToastrService } from 'ngx-toastr';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
@@ -6,7 +6,7 @@ import { EditReservationModalComponent } from '../modal/edit-reservation-modal/e
 import { DateEmiterService } from '../../services/date-emiter.service';
 import { NewReservation } from '../../../models/new-reservation.model';
 import { AccountService } from '../../services/account.service';
-import { take } from 'rxjs';
+import { Observable, catchError, of, take, tap } from 'rxjs';
 import { AuthenticatedUser } from '../../../models/authenticated-user.model';
 import { RoleType } from '../../../models/role-type.model';
 import { RestService } from '../rest/rest-service';
@@ -16,13 +16,15 @@ import { RestService } from '../rest/rest-service';
   templateUrl: './list-reservations.component.html',
   styleUrls: ['./list-reservations.component.css']
 })
-export class ListReservationsComponent implements OnInit {
-  public allReservations: Reservation[];
+export class ListReservationsComponent implements OnInit, AfterViewInit{
+  public reservations!: Reservation[];
   private editModalRef!: NgbModalRef;
   private currenReservation!: Reservation;
   public currentUser!: AuthenticatedUser | null;
   public isAdmin!: boolean;
   public isLoading: boolean = false;
+  public initialData: Reservation[];
+  displayedColumns: string[];
 
   constructor(
     private notification: ToastrService,
@@ -31,15 +33,20 @@ export class ListReservationsComponent implements OnInit {
     private restService:RestService,
     private accountService: AccountService
   ){
-    this.allReservations = [];
     this.accountService.currentUser$.pipe(take(1)).subscribe(
       result => {
         this.currentUser = result;
         this.isAdmin = this.currentUser?.role.roleType == RoleType.Admin;
       }
     );
-    
+    this.initialData = [];
+    this.reservations = [];
+    this.displayedColumns = ['user', 'serviceType', 'dateOfReservation', 'actions'];
   }
+
+  ngAfterViewInit() {
+  }
+
   ngOnInit() {
     this.getAllReservations();
     
@@ -65,7 +72,8 @@ export class ListReservationsComponent implements OnInit {
   }
 
   submitEditModalRef(newReservation:NewReservation) {
-    this.editReservation(newReservation)
+    this.editReservation(newReservation
+    )
     this.closeEditModal();
   }
 
@@ -103,16 +111,17 @@ export class ListReservationsComponent implements OnInit {
 
   getAllReservations() {
     this.isLoading = true;
-    this.restService.get("reservation").subscribe({
-      next: (result) => {
-        this.allReservations = result;
+    this.restService.get("reservation").subscribe(
+      res => {
+        this.reservations = res;
+        this.initialData = this.reservations.slice(0, 5);
         this.isLoading = false;
       },
-      error: (error) => {
-        this.notification.error(error.message);
+      err => {
+        this.notification.error(err.message);
         this.isLoading = false;
       }
-    })
+    )
   }
 
   //editReservation(reservaton:Reservation) {

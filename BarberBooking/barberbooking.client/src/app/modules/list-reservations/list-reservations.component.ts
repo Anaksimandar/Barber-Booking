@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { Reservation } from '../../../models/reservation.model';
 import { ToastrService } from 'ngx-toastr';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
@@ -6,25 +6,30 @@ import { EditReservationModalComponent } from '../modal/edit-reservation-modal/e
 import { DateEmiterService } from '../../services/date-emiter.service';
 import { NewReservation } from '../../../models/new-reservation.model';
 import { AccountService } from '../../services/account.service';
-import { Observable, catchError, of, take, tap } from 'rxjs';
+import { take } from 'rxjs';
 import { AuthenticatedUser } from '../../../models/authenticated-user.model';
 import { RoleType } from '../../../models/role-type.model';
 import { RestService } from '../rest/rest-service';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, Sort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-list-reservations',
   templateUrl: './list-reservations.component.html',
   styleUrls: ['./list-reservations.component.css']
 })
-export class ListReservationsComponent implements OnInit, AfterViewInit{
-  public reservations!: Reservation[];
+export class ListReservationsComponent implements OnInit {
   private editModalRef!: NgbModalRef;
   private currenReservation!: Reservation;
   public currentUser!: AuthenticatedUser | null;
   public isAdmin!: boolean;
   public isLoading: boolean = false;
-  public initialData: Reservation[];
+  public dataSource = new MatTableDataSource<Reservation>();
   displayedColumns: string[];
+  public currentPage: number = 0;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private notification: ToastrService,
@@ -39,17 +44,17 @@ export class ListReservationsComponent implements OnInit, AfterViewInit{
         this.isAdmin = this.currentUser?.role.roleType == RoleType.Admin;
       }
     );
-    this.initialData = [];
-    this.reservations = [];
     this.displayedColumns = ['user', 'serviceType', 'dateOfReservation', 'actions'];
-  }
-
-  ngAfterViewInit() {
   }
 
   ngOnInit() {
     this.getAllReservations();
     
+  }
+
+  onSearchEvent(event: Event) {
+    const searchValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = searchValue.trim().toLowerCase();
   }
 
   openEditReservationModal(reservation: Reservation) {
@@ -67,6 +72,11 @@ export class ListReservationsComponent implements OnInit, AfterViewInit{
     })
   }
 
+  handlePageEvent(pageEvent: PageEvent) {
+    console.log(pageEvent);
+    this.currentPage = pageEvent.pageIndex;
+  }
+  
   closeEditModal() {
     this.editModalRef?.close();
   }
@@ -113,8 +123,10 @@ export class ListReservationsComponent implements OnInit, AfterViewInit{
     this.isLoading = true;
     this.restService.get("reservation").subscribe(
       res => {
-        this.reservations = res;
-        this.initialData = this.reservations.slice(0, 5);
+        this.dataSource = new MatTableDataSource<Reservation>(res);
+        console.log(this.dataSource);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
         this.isLoading = false;
       },
       err => {

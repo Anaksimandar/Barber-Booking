@@ -99,8 +99,7 @@ using (var scope = app.Services.CreateScope())
     {
         await seedingService.SeedServices();
         await seedingService.SeedRoles();
-        await seedingService.SeedUsers();
-        await seedingService.SeedReservations();
+       
     }
 
 

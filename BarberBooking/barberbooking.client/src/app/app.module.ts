@@ -38,6 +38,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table'
+import { MatSortModule } from '@angular/material/sort';
 
 
 @NgModule({
@@ -79,6 +80,7 @@ import { MatTableModule } from '@angular/material/table'
     MatToolbarModule,
     MatPaginatorModule,
     MatTableModule,
+    MatSortModule,
     ToastrModule.forRoot({
       timeOut: 3000,
       positionClass: 'toast-top-right',

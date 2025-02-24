@@ -1,17 +1,20 @@
 <div class="container">
   <app-navigation></app-navigation>
-
-  <table mat-table [dataSource]="initialData" class="mat-elevation-z8 table table-striped table-hover">
+  <mat-form-field>
+    <mat-label>Search</mat-label>
+    <input placeholder="Search here..." (keyup)="onSearchEvent($event)" matInput/>
+  </mat-form-field>
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 table table-striped table-hover" matSort>
 
     <!-- User Column -->
     <ng-container matColumnDef="user">
-      <th mat-header-cell *matHeaderCellDef>User</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by user">Name
       <td mat-cell *matCellDef="let reservation">{{ currentUser?.name }} {{ currentUser?.surname }}</td>
     </ng-container>
 
     <!-- Service Type Column -->
     <ng-container matColumnDef="serviceType">
-      <th mat-header-cell *matHeaderCellDef>Service Type</th>
+      <th mat-header-cell *matHeaderCellDef>Service Type
       <td mat-cell *matCellDef="let reservation">
         <strong>{{ reservation.serviceType?.name }}</strong><br>
         {{ reservation.serviceType?.description }}<br>
@@ -23,7 +26,7 @@
 
     <!-- Date Column -->
     <ng-container matColumnDef="dateOfReservation">
-      <th mat-header-cell *matHeaderCellDef>Date of Reservation</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by dateOfReservation">Date Of Reservation
       <td mat-cell *matCellDef="let reservation">
         {{ reservation.dateOfReservation | date:'dd/MM/yyyy HH:mm' }}
       </td>
@@ -48,9 +51,10 @@
   </table>
 
   <!-- Paginator -->
-  <mat-paginator [length]="reservations.length"
-                 [pageSize]="5"
+  <mat-paginator [pageSize]="5"
                  [pageSizeOptions]="[5, 10, 25, 100]"
+                 (page)="handlePageEvent($event)"
+                 [pageIndex]="currentPage"
                  aria-label="Select page">
   </mat-paginator>
 </div>
